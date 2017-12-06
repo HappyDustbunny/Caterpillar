@@ -10,12 +10,14 @@ turn_axis = vector(0, 1, 0)
 def make_head():
     ''' Make caterpillar head '''
     head_ball = sphere(color=color.orange)
+    helmet = sphere(pos=vector(.5, 0, 0), radius=1.55, opacity=0.3)
     left_eye = sphere(pos=vector(0.5, 0.5, -0.4), radius=0.35)
     right_eye = sphere(pos=vector(0.5, 0.5, 0.4), radius=0.35)
     left_pupil = sphere(pos=vector(0.6, 0.56, -0.42), radius=0.25, color=color.black)
     rigth_pupil = sphere(pos=vector(0.6, 0.56, 0.42), radius=0.25, color=color.black)
-    head = compound([head_ball, left_eye, right_eye, left_pupil, rigth_pupil])
+    head = compound([head_ball, helmet, left_eye, right_eye, left_pupil, rigth_pupil])
     return head
+
 def make_body(caterpillar_pos):
     ''' Make caterpillar body '''
     body = []
