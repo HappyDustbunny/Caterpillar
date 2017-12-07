@@ -1,5 +1,6 @@
 ''' Snake clone '''
 
+from math import sqrt
 from vpython import box, sphere, color, scene, vector, compound, sleep, cross, radians, random, textures
 
 keyevent = ''
@@ -30,12 +31,13 @@ def make_body(caterpillar_pos):
 
 def make_planets(number_of_planets):
     ''' Makes planets '''
+    planets = []
     for _ in range(number_of_planets):
-        planets = []
         planet = sphere(pos=vector(int(150*random() - 50), int(150*random() - 50),
-                        int(150*random()) - 50), radius=int(20*random()),
+                                   int(150*random()) - 50), radius=int(20*random()),
                         texture=textures.wood_old)
         planets.append(planet)
+    return planets
 
 def direction(event):
     ''' Capture keyboard interupt and choose new direction and new orientation '''
@@ -43,7 +45,9 @@ def direction(event):
     global keyevent
     keyevent = event.key
 
-
+def veclen(invector):
+    '''checks the length of a vector'''
+    return sqrt(invector.x**2 + invector.y**2 + invector.z**2)
 
 def main():
     ''' Main loop '''
@@ -55,7 +59,7 @@ def main():
 
     head = make_head()
     body = make_body(caterpillar_pos)
-    make_planets(10) # Makes planets
+    planets = make_planets(10) # Makes planets
 
     forward = vector(1, 0, 0)
     upward = vector(0, 1, 0)
@@ -63,9 +67,8 @@ def main():
     turn_axis = vector(0, 1, 0)
 
     global keyevent # Listening for key presses
-
-    d_t = 0.4
-
+  
+    d_t = 0.2
     while True:
         if keyevent == 'a':
             forward = -cross(forward, upward)
@@ -89,8 +92,10 @@ def main():
         caterpillar_pos[0] += forward
         head.pos = caterpillar_pos[0]
         scene.center = caterpillar_pos[0]
+        for planet in planets:
+            if veclen(planet.pos-head.pos) <= planet.radius:
+                planet.texture = textures.flower
         # scene.up = upward    # Gives hard turning camera
-        # sleep(d_t)
         if turn:
             head.rotate(angle=radians(90), axis=turn_axis)
         for num, segment in enumerate(body):
