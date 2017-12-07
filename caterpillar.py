@@ -1,6 +1,6 @@
 ''' Snake clone '''
 
-from vpython import box, sphere, color, scene, vector, compound, sleep, cross, radians
+from vpython import box, sphere, color, scene, vector, compound, sleep, cross, radians, random, textures
 
 keyevent = ''
 
@@ -28,8 +28,17 @@ def make_body(caterpillar_pos):
         body.append(body_segment)
     return body
 
+def make_planets(number_of_planets):
+    ''' Makes planets '''
+    for _ in range(number_of_planets):
+        planets = []
+        planet = sphere(pos=vector(int(150*random() - 50), int(150*random() - 50),
+                        int(150*random()) - 50), radius=int(20*random()),
+                        texture=textures.wood_old)
+        planets.append(planet)
+
 def direction(event):
-    ''' Capture keyboard inupt and choose new direction and new orientation '''
+    ''' Capture keyboard interupt and choose new direction and new orientation '''
     # value = event.key
     global keyevent
     keyevent = event.key
@@ -46,40 +55,41 @@ def main():
 
     head = make_head()
     body = make_body(caterpillar_pos)
+    make_planets(10) # Makes planets
 
     forward = vector(1, 0, 0)
-    up = vector(0, 1, 0)
+    upward = vector(0, 1, 0)
     turn = False
     turn_axis = vector(0, 1, 0)
 
-    '''Listening for key presses'''
-    global keyevent
+    global keyevent # Listening for key presses
 
-    
     d_t = 0.4
 
     while True:
         if keyevent == 'a':
-            forward = -cross(forward, up)
+            forward = -cross(forward, upward)
             turn = True
-            turn_axis = up
+            turn_axis = upward
         if keyevent == 'd':
-            forward = cross(forward, up)
+            forward = cross(forward, upward)
             turn = True
-            turn_axis = -up
+            turn_axis = -upward
         if keyevent == 'w':
-            forward, up = up, -forward
+            forward, upward = upward, -forward
             turn = True
-            turn_axis = cross(forward, up)
+            turn_axis = cross(forward, upward)
         if keyevent == 's':
-            forward, up = -up, forward
+            forward, upward = -upward, forward
             turn = True
-            turn_axis = -cross(forward, up)
+            turn_axis = -cross(forward, upward)
         keyevent = ''
 
-        old_caterpillar_pos = caterpillar_pos[:]
+        old_caterpillar_pos = caterpillar_pos[:]  # Moving the caterpillar
         caterpillar_pos[0] += forward
         head.pos = caterpillar_pos[0]
+        scene.center = caterpillar_pos[0]
+        # scene.up = upward    # Gives hard turning camera
         # sleep(d_t)
         if turn:
             head.rotate(angle=radians(90), axis=turn_axis)
