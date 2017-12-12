@@ -1,7 +1,7 @@
 ''' Snake clone '''
 
-from math import sqrt
-from vpython import box, sphere, color, scene, vector, compound, sleep, cross, radians, random, textures
+from math import sqrt, acos
+from vpython import *
 
 keyevent = ''
 
@@ -67,24 +67,24 @@ def main():
     turn_axis = vector(0, 1, 0)
 
     global keyevent # Listening for key presses
-  
+
     d_t = 0.2
     while True:
         if keyevent == 'a':
             forward = -cross(forward, upward)
-            turn = True
+            turn = radians(90)
             turn_axis = upward
         if keyevent == 'd':
             forward = cross(forward, upward)
-            turn = True
+            turn = radians(90)
             turn_axis = -upward
         if keyevent == 'w':
             forward, upward = upward, -forward
-            turn = True
+            turn = radians(90)
             turn_axis = cross(forward, upward)
         if keyevent == 's':
             forward, upward = -upward, forward
-            turn = True
+            turn = radians(90)
             turn_axis = -cross(forward, upward)
         keyevent = ''
 
@@ -94,14 +94,20 @@ def main():
         scene.center = caterpillar_pos[0]
         for planet in planets:
             if veclen(planet.pos-head.pos) <= planet.radius:
-                planet.texture = textures.flower
+                coretohead = norm(planet.pos-head.pos)*planet.radius
+                head.pos = coretohead + planet.pos
+                newforward = upward - ((dot(upward, coretohead)/mag(upward)**2) * upward)
+                turn = acos(dot(forward, newforward) / (veclen(forward)*veclen(newforward)))
+                forward = newforward
+                upward = norm(coretohead)
+                turn_axis = cross(forward, upward)
         # scene.up = upward    # Gives hard turning camera
-        if turn:
-            head.rotate(angle=radians(90), axis=turn_axis)
+        if turn > 0:
+            head.rotate(angle=turn, axis=turn_axis)
         for num, segment in enumerate(body):
             segment.pos = old_caterpillar_pos[num]
-            if turn:
-                segment.rotate(angle=radians(90), axis=turn_axis)
+            if turn > 0:
+                segment.rotate(angle=turn, axis=turn_axis)
             caterpillar_pos[num + 1] = old_caterpillar_pos[num]
             # sleep(d_t)
         turn = False
