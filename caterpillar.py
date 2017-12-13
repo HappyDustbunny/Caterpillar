@@ -45,10 +45,6 @@ def direction(event):
     global keyevent
     keyevent = event.key
 
-def veclen(invector):
-    '''checks the length of a vector'''
-    return sqrt(invector.x**2 + invector.y**2 + invector.z**2)
-
 def main():
     ''' Main loop '''
     scene.bind('keydown', direction)
@@ -93,13 +89,17 @@ def main():
         head.pos = caterpillar_pos[0]
         scene.center = caterpillar_pos[0]
         for planet in planets:
-            if veclen(planet.pos-head.pos) <= planet.radius:
+            if mag(planet.pos-head.pos) <= planet.radius:
                 coretohead = norm(planet.pos-head.pos)*planet.radius
                 head.pos = coretohead + planet.pos
                 newforward = upward - ((dot(upward, coretohead)/mag(upward)**2) * upward)
-                turn = acos(dot(forward, newforward) / (veclen(forward)*veclen(newforward)))
-                forward = newforward
+                turn = acos(dot(forward, newforward) / (mag(forward)*mag(newforward)))
                 upward = norm(coretohead)
+                forward = norm(newforward)
+                if dot(forward, upward) != 0:
+                    print(forward)
+                    print(upward)
+                    return
                 turn_axis = cross(forward, upward)
         # scene.up = upward    # Gives hard turning camera
         if turn > 0:
