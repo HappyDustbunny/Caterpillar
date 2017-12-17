@@ -1,6 +1,6 @@
 ''' Snake clone '''
 
-from math import sqrt, acos
+from math import acos
 from vpython import *
 
 keyevent = ''
@@ -32,12 +32,27 @@ def make_body(caterpillar_pos):
 def make_planets(number_of_planets):
     ''' Makes planets '''
     planets = []
-    for _ in range(number_of_planets):
-        planet = sphere(pos=vector(int(150*random() - 50), int(150*random() - 50),
-                                   int(150*random()) - 50), radius=int(20*random()),
-                        texture=textures.wood_old)
-        planets.append(planet)
+    planet = sphere(pos=vector(50, 0, 0), radius=20, texture=textures.wood_old) # Testplanet. Remove when reinstating all planets
+    planets.append(planet) # Testplanet. Remove when reinstating all planets
+    # for _ in range(number_of_planets):
+    #     planet = sphere(pos=vector(int(150*random() - 50), int(150*random() - 50),
+    #                                int(150*random()) - 50), radius=int(20*random()),
+    #                     texture=textures.wood_old)
+    #     planets.append(planet)
     return planets
+
+def make_food(planets):
+    ''' Distribute food on planets '''
+    for planet in planets:
+        radius = planet.radius
+        foods = []
+        for _ in range(int(5*random() + 5)): # makes 5-10 pellets
+            food_pos = norm(vector(random() - 0.5, random() - 0.5, random() - 0.5))*radius + planet.pos
+            food = sphere(pos=food_pos, texture=textures.rock)
+            foods.append(food)
+        planet.food = foods
+    return
+
 
 def direction(event):
     ''' Capture keyboard interupt and choose new direction and new orientation '''
@@ -49,13 +64,14 @@ def main():
     ''' Main loop '''
     scene.bind('keydown', direction)
 
-    caterpillar_pos = []
+    caterpillar_pos = []  # Initialize Caterpillar position. Head in origo
     for dummy in range(5):
         caterpillar_pos.append(vector(-dummy, 0, 0))
 
     head = make_head()
     body = make_body(caterpillar_pos)
     planets = make_planets(10) # Makes planets
+    make_food(planets) # Distribute food on the planets
 
     forward = vector(1, 0, 0)
     upward = vector(0, 1, 0)
