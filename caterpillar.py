@@ -32,7 +32,7 @@ def make_body(caterpillar_pos):
 def make_planets(number_of_planets):
     ''' Makes planets '''
     planets = []
-    planet = sphere(pos=vector(50, 0, 0), radius=20, texture=textures.wood_old) # Testplanet. Remove when reinstating all planets
+    planet = sphere(pos=vector(50, -1, 0), radius=20, texture=textures.wood_old) # Testplanet. Remove when reinstating all planets
     planets.append(planet) # Testplanet. Remove when reinstating all planets
     # for _ in range(number_of_planets):
     #     planet = sphere(pos=vector(int(150*random() - 50), int(150*random() - 50),
@@ -106,16 +106,16 @@ def main():
         scene.center = caterpillar_pos[0]
         for planet in planets:
             if mag(planet.pos-head.pos) <= planet.radius:
-                coretohead = norm(planet.pos-head.pos)*planet.radius
+                coretohead = norm(head.pos-planet.pos)*planet.radius
                 head.pos = coretohead + planet.pos
-                newforward = upward - ((dot(upward, coretohead)/mag(upward)**2) * upward)
+                newforward = norm(forward - ((dot(forward, coretohead)/mag(coretohead)**2) * coretohead))
                 turn = acos(dot(forward, newforward) / (mag(forward)*mag(newforward)))
                 upward = norm(coretohead)
                 forward = norm(newforward)
                 if dot(forward, upward) != 0:
                     print(forward)
                     print(upward)
-                    return
+                    # return
                 turn_axis = cross(forward, upward)
         # scene.up = upward    # Gives hard turning camera
         if turn > 0:
