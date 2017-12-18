@@ -113,13 +113,22 @@ def main():
             caterpillar_pos[0] += forward
             head.pos = caterpillar_pos[0]
             scene.center = caterpillar_pos[0]
-            for planet in planets:
+            for num, segment in enumerate(body):
+                segment.pos = old_caterpillar_pos[num]
+                if turn > 0:
+                    segment.rotate(angle=turn, axis=turn_axis)
+                caterpillar_pos[num + 1] = old_caterpillar_pos[num]
+                sleep(0.001) # Remove when movement is debugged...
+
+            for planet in planets: # Checking if a planet is reached
                 if mag(planet.pos-head.pos) <= planet.radius:
+                    # on_planet = True
                     core_to_head = norm(head.pos-planet.pos)*planet.radius
                     head.pos = core_to_head + planet.pos + 0.5*norm(core_to_head)
                     new_forward = norm(forward - proj(forward, core_to_head))
                     if new_forward == 0: # If incomming is vertical new_forward = 0
                         new_forward = upward
+                        # turn = radians(90)
                     turn = acos(dot(forward, new_forward) / (mag(forward)*mag(new_forward)))
                     upward = norm(core_to_head)
                     forward = norm(new_forward)
@@ -129,18 +138,9 @@ def main():
                         return
                     turn_axis = cross(forward, upward)
             # scene.up = upward    # Gives hard turning camera
-            for num, segment in enumerate(body):
-                segment.pos = old_caterpillar_pos[num]
-                if turn > 0:
-                    segment.rotate(angle=turn, axis=turn_axis)
-                caterpillar_pos[num + 1] = old_caterpillar_pos[num]
-            turn = False
+
+            turn = 0
             sleep(d_t)
-    # for _ in range(20):
-    #     for segment in body:
-    #         for _ in range(5):
-    #             segment.pos.x += .1
-    #             sleep(0.001)
 
 box()
 
