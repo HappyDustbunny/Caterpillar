@@ -53,56 +53,61 @@ def make_food(planets):
         planet.food = foods
     return
 
-
 def direction(event):
     ''' Capture keyboard interupt and choose new direction and new orientation '''
     # value = event.key
     global keyevent
     keyevent = event.key
 
+def change_direction(forward, upward, turn, turn_axis):
+    ''' Checking keyevent value and uddate direction if keyevent is not empty '''
+    global keyevent
+    if keyevent == 'a':
+        forward = -cross(forward, upward)
+        turn = radians(90)
+        turn_axis = upward
+    if keyevent == 'd':
+        forward = cross(forward, upward)
+        turn = radians(90)
+        turn_axis = -upward
+    if keyevent == 'w':
+        forward, upward = upward, -forward
+        turn = radians(90)
+        turn_axis = cross(forward, upward)
+    if keyevent == 's':
+        forward, upward = -upward, forward
+        turn = radians(90)
+        turn_axis = -cross(forward, upward)
+    keyevent = ''
+    return forward, upward, turn, turn_axis
+
 def main():
     ''' Main loop '''
     scene.bind('keydown', direction)
 
-    caterpillar_pos = []  # Initialize Caterpillar position. Head in origo
-    for dummy in range(5):
-        caterpillar_pos.append(vector(-dummy, 0, 0))
-
-    head = make_head()
-    body = make_body(caterpillar_pos)
-    planets = make_planets(10) # Makes planets
-    make_food(planets) # Distribute food on the planets
+    global keyevent # Listening for key presses
 
     forward = vector(1, 0, 0)
     upward = vector(0, 1, 0)
     turn = 0
     turn_axis = vector(0, 1, 0)
 
-    global keyevent # Listening for key presses
+    caterpillar_pos = []  # Initialize Caterpillar position. Head in origo
+    for dummy in range(5):
+        caterpillar_pos.append(vector(-dummy, 0, 0))
+
+    head = make_head() # Make Caterpillar head
+    body = make_body(caterpillar_pos) # Make Caterpillar body
+    planets = make_planets(10) # Makes planets
+    make_food(planets) # Distribute food on the planets
 
     d_t = 0.2
-    onplanet = False
+    on_planet = False
     while True:
-        if onplanet:
+        if on_planet:
             pass
         else:
-            if keyevent == 'a':
-                forward = -cross(forward, upward)
-                turn = radians(90)
-                turn_axis = upward
-            if keyevent == 'd':
-                forward = cross(forward, upward)
-                turn = radians(90)
-                turn_axis = -upward
-            if keyevent == 'w':
-                forward, upward = upward, -forward
-                turn = radians(90)
-                turn_axis = cross(forward, upward)
-            if keyevent == 's':
-                forward, upward = -upward, forward
-                turn = radians(90)
-                turn_axis = -cross(forward, upward)
-            keyevent = ''
+            forward, upward, turn, turn_axis = change_direction(forward, upward, turn, turn_axis)
 
             old_caterpillar_pos = caterpillar_pos[:]  # Moving the caterpillar
             caterpillar_pos[0] += forward
@@ -110,26 +115,25 @@ def main():
             scene.center = caterpillar_pos[0]
             for planet in planets:
                 if mag(planet.pos-head.pos) <= planet.radius:
-                    coretohead = norm(head.pos-planet.pos)*planet.radius
-                    head.pos = coretohead + planet.pos
-                    newforward = norm(forward - proj(forward, coretohead))
-                    turn = acos(dot(forward, newforward) / (mag(forward)*mag(newforward)))
-                    upward = norm(coretohead)
-                    forward = norm(newforward)
+                    core_to_head = norm(head.pos-planet.pos)*planet.radius
+                    head.pos = core_to_head + planet.pos + 0.5*norm(core_to_head)
+                    new_forward = norm(forward - proj(forward, core_to_head))
+                    if new_forward == 0: # If incomming is vertical new_forward = 0
+                        new_forward = upward
+                    turn = acos(dot(forward, new_forward) / (mag(forward)*mag(new_forward)))
+                    upward = norm(core_to_head)
+                    forward = norm(new_forward)
                     if dot(forward, upward) > 0.001:
                         print(forward)
                         print(upward)
                         return
                     turn_axis = cross(forward, upward)
             # scene.up = upward    # Gives hard turning camera
-            if turn > 0:
-                head.rotate(angle=turn, axis=turn_axis)
             for num, segment in enumerate(body):
                 segment.pos = old_caterpillar_pos[num]
                 if turn > 0:
                     segment.rotate(angle=turn, axis=turn_axis)
                 caterpillar_pos[num + 1] = old_caterpillar_pos[num]
-                # sleep(d_t)
             turn = False
             sleep(d_t)
     # for _ in range(20):
