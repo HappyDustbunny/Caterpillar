@@ -1,5 +1,6 @@
 # Caterpillar
 - a Snake inspired game
+
 Move with asdw: a(left) s(down) d(rigth) w(up)
 Try to collect the food on each planet
 
