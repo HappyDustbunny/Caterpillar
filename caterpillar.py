@@ -1,6 +1,6 @@
 ''' Snake clone '''
 
-from math import acos, pi
+from math import acos
 from vpython import *
 
 keyevent = ''
@@ -47,8 +47,8 @@ def make_food(planets):
         radius = planet.radius
         foods = []
         for _ in range(int(5*random() + 5)): # makes 5-10 pellets
-            food_pos = norm(vector(random() - 0.5,
-                            random() - 0.5, random() - 0.5))*radius + planet.pos
+            food_pos = norm(vector(random() - 0.5, random() - 0.5,
+                                   random() - 0.5))*radius + planet.pos
             food = sphere(pos=food_pos, texture=textures.rock)
             foods.append(food)
         planet.food = foods
@@ -82,14 +82,14 @@ def change_direction(forward, upward, turn, turn_axis):
     keyevent = ''
     return forward, upward, turn, turn_axis
 
-def planet_direction(forward, upward, turn, turn_axis, on_planet, head):
+def planet_direction(forward, upward, turn, turn_axis, on_planet, head, planets):
     ''' Checking keyevent value and uddate direction while on planet.'''
     global keyevent
-    upward = norm(head.pos-planet.pos)
+    upward = norm(head.pos-planets[on_planet].pos)
     # planet planet planet planet planet planet planet
     if keyevent == 'a':
         forward = -cross(forward, upward)
-        forward.rotate(1/planet.radius, cross(forward, upward))
+        forward.rotate(1/planets[on_planet].radius, cross(forward, upward))
         #turn and turn_axis not yet adapted
         #this means the caterpillar body's legs and face will get out of sync with the planet
         turn = radians(90)
@@ -97,7 +97,7 @@ def planet_direction(forward, upward, turn, turn_axis, on_planet, head):
     # planet planet planet planet planet planet planet
     if keyevent == 'd':
         forward = cross(forward, upward)
-        forward.rotate(1/planet.radius, cross(forward, upward))
+        forward.rotate(1/planets[on_planet].radius, cross(forward, upward))
         #turn and turn_axis not yet adapted
         #this means the caterpillar body's legs and face will get out of sync with the planet
         turn = radians(90)
@@ -111,11 +111,11 @@ def planet_direction(forward, upward, turn, turn_axis, on_planet, head):
     # planet planet planet planet planet planet planet
     if keyevent == '':
         turn_axis = cross(forward, upward)
-        turn = 1/planet.radius
-        forward.rotate(1/planet.radius, cross(forward, upward))
+        turn = 1/planets[on_planet].radius
+        forward.rotate(1/planets[on_planet].radius, cross(forward, upward))
     # planet planet planet planet planet planet planet
     keyevent = ''
-    return forward, upward, turn, turn_axis, on_planet
+    return forward, upward, turn, turn_axis, on_planet, head, planets
 
 def main():
     ''' Main loop '''
@@ -141,24 +141,13 @@ def main():
     on_planet = None
     while True:
         if on_planet != None:
-            forward, upward, turn, turn_axis, on_planet = planet_direction(forward, upward, turn, turn_axis, on_planet, head)
+            forward, upward, turn, turn_axis, on_planet, head, planets = planet_direction(forward, upward, turn, turn_axis, on_planet, head, planets)
         else:
             forward, upward, turn, turn_axis = change_direction(forward, upward, turn, turn_axis)
 
-            old_caterpillar_pos = caterpillar_pos[:]  # Moving the caterpillar
-            caterpillar_pos[0] += forward
-            head.pos = caterpillar_pos[0]
-            scene.center = caterpillar_pos[0]
-            for num, segment in enumerate(body):
-                segment.pos = old_caterpillar_pos[num]
-                if turn > 0:
-                    segment.rotate(angle=turn, axis=turn_axis)
-                caterpillar_pos[num + 1] = old_caterpillar_pos[num]
-                sleep(0.001) # Remove when movement is debugged...
-
-            for planet in planets: # Checking if a planet is reached
+            for num1, planet in enumerate(planets): # Checking if a planet is reached
                 if mag(planet.pos-head.pos) <= planet.radius:
-                    # on_planet = True
+                    on_planet = num1
                     core_to_head = norm(head.pos-planet.pos)*planet.radius
                     head.pos = core_to_head + planet.pos + 0.5*norm(core_to_head)
                     new_forward = norm(forward - proj(forward, core_to_head))
