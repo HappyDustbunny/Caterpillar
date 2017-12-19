@@ -1,6 +1,6 @@
 ''' Snake clone '''
 
-from math import acos
+from math import acos, pi
 from vpython import *
 
 keyevent = ''
@@ -47,7 +47,8 @@ def make_food(planets):
         radius = planet.radius
         foods = []
         for _ in range(int(5*random() + 5)): # makes 5-10 pellets
-            food_pos = norm(vector(random() - 0.5, random() - 0.5, random() - 0.5))*radius + planet.pos
+            food_pos = norm(vector(random() - 0.5,
+                            random() - 0.5, random() - 0.5))*radius + planet.pos
             food = sphere(pos=food_pos, texture=textures.rock)
             foods.append(food)
         planet.food = foods
@@ -81,6 +82,41 @@ def change_direction(forward, upward, turn, turn_axis):
     keyevent = ''
     return forward, upward, turn, turn_axis
 
+def planet_direction(forward, upward, turn, turn_axis, on_planet, head):
+    ''' Checking keyevent value and uddate direction while on planet.'''
+    global keyevent
+    upward = norm(head.pos-planet.pos)
+    # planet planet planet planet planet planet planet
+    if keyevent == 'a':
+        forward = -cross(forward, upward)
+        forward.rotate(1/planet.radius, cross(forward, upward))
+        #turn and turn_axis not yet adapted
+        #this means the caterpillar body's legs and face will get out of sync with the planet
+        turn = radians(90)
+        turn_axis = upward
+    # planet planet planet planet planet planet planet
+    if keyevent == 'd':
+        forward = cross(forward, upward)
+        forward.rotate(1/planet.radius, cross(forward, upward))
+        #turn and turn_axis not yet adapted
+        #this means the caterpillar body's legs and face will get out of sync with the planet
+        turn = radians(90)
+        turn_axis = -upward
+    # planet planet planet planet planet planet planet
+    if keyevent == 'w':
+        forward, upward = upward, -forward
+        turn = radians(90)
+        on_planet = None
+        turn_axis = cross(forward, upward)
+    # planet planet planet planet planet planet planet
+    if keyevent == '':
+        turn_axis = cross(forward, upward)
+        turn = 1/planet.radius
+        forward.rotate(1/planet.radius, cross(forward, upward))
+    # planet planet planet planet planet planet planet
+    keyevent = ''
+    return forward, upward, turn, turn_axis, on_planet
+
 def main():
     ''' Main loop '''
     scene.bind('keydown', direction)
@@ -102,10 +138,10 @@ def main():
     make_food(planets) # Distribute food on the planets
 
     d_t = 0.2
-    on_planet = False
+    on_planet = None
     while True:
-        if on_planet:
-            pass
+        if on_planet != None:
+            forward, upward, turn, turn_axis, on_planet = planet_direction(forward, upward, turn, turn_axis, on_planet, head)
         else:
             forward, upward, turn, turn_axis = change_direction(forward, upward, turn, turn_axis)
 
@@ -128,7 +164,7 @@ def main():
                     new_forward = norm(forward - proj(forward, core_to_head))
                     if new_forward == 0: # If incomming is vertical new_forward = 0
                         new_forward = upward
-                        # turn = radians(90)
+                        turn = radians(90)
                     turn = acos(dot(forward, new_forward) / (mag(forward)*mag(new_forward)))
                     upward = norm(core_to_head)
                     forward = norm(new_forward)
@@ -137,6 +173,7 @@ def main():
                         print(upward)
                         return
                     turn_axis = cross(forward, upward)
+                    # on_planet = planet
             # scene.up = upward    # Gives hard turning camera
 
             turn = 0
