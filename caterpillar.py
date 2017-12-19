@@ -16,9 +16,9 @@ def make_head():
     head = compound([head_ball, helmet, left_eye, right_eye, left_pupil, rigth_pupil])
     return head
 
-def make_body(caterpillar_pos):
+def make_body(caterpillar_pos, head):
     ''' Make caterpillar body '''
-    body = []
+    body = [head]
     for increment in range(1, 5):
         body_sphere = sphere(pos=caterpillar_pos[increment], color=color.blue)
         left_foot = sphere(pos=caterpillar_pos[increment] +
@@ -97,7 +97,7 @@ def main():
         caterpillar_pos.append(vector(-dummy, 0, 0))
 
     head = make_head() # Make Caterpillar head
-    body = make_body(caterpillar_pos) # Make Caterpillar body
+    body = make_body(caterpillar_pos, head) # Make Caterpillar body
     planets = make_planets(10) # Makes planets
     make_food(planets) # Distribute food on the planets
 
@@ -109,17 +109,6 @@ def main():
         else:
             forward, upward, turn, turn_axis = change_direction(forward, upward, turn, turn_axis)
 
-            old_caterpillar_pos = caterpillar_pos[:]  # Moving the caterpillar
-            caterpillar_pos[0] += forward
-            head.pos = caterpillar_pos[0]
-            scene.center = caterpillar_pos[0]
-            for num, segment in enumerate(body):
-                segment.pos = old_caterpillar_pos[num]
-                if turn > 0:
-                    segment.rotate(angle=turn, axis=turn_axis)
-                caterpillar_pos[num + 1] = old_caterpillar_pos[num]
-                sleep(0.001) # Remove when movement is debugged...
-
             for planet in planets: # Checking if a planet is reached
                 if mag(planet.pos-head.pos) <= planet.radius:
                     # on_planet = True
@@ -128,18 +117,25 @@ def main():
                     new_forward = norm(forward - proj(forward, core_to_head))
                     if new_forward == 0: # If incomming is vertical new_forward = 0
                         new_forward = upward
-                        # turn = radians(90)
                     turn = acos(dot(forward, new_forward) / (mag(forward)*mag(new_forward)))
                     upward = norm(core_to_head)
                     forward = norm(new_forward)
-                    if dot(forward, upward) > 0.001:
-                        print(forward)
-                        print(upward)
-                        return
                     turn_axis = cross(forward, upward)
-            # scene.up = upward    # Gives hard turning camera
 
+            old_caterpillar_pos = caterpillar_pos[:]  # Moving the caterpillar
+            caterpillar_pos[0] += forward
+            body[0].rotate(angle=turn, axis=turn_axis)
+            body[0].pos = caterpillar_pos[0]
+            for num, segment in enumerate(body):
+                if num == 0:
+                    continue
+                segment.pos = old_caterpillar_pos[num - 1]
+                # if turn > 0:
+                segment.rotate(angle=turn, axis=turn_axis)
+                caterpillar_pos[num] = old_caterpillar_pos[num - 1]
+            scene.center = caterpillar_pos[0]
             turn = 0
+            # scene.up = upward    # Gives hard turning camera
             sleep(d_t)
 
 box()
