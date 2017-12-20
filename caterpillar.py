@@ -32,7 +32,7 @@ def make_body(caterpillar_pos, head):
 def make_planets(number_of_planets):
     ''' Makes planets '''
     planets = []
-    planet = sphere(pos=vector(50, -1, 0), radius=20, texture=textures.wood_old) # Testplanet. Remove when reinstating all planets
+    planet = sphere(pos=vector(50, -1, 0), radius=20, texture=textures.wood_old) # Test planet. Remove when reinstating all planets
     planets.append(planet) # Testplanet. Remove when reinstating all planets
     # for _ in range(number_of_planets):
     #     planet = sphere(pos=vector(int(150*random() - 50), int(150*random() - 50),
@@ -89,7 +89,7 @@ def planet_direction(forward, upward, turn, turn_axis, on_planet, head, planets)
     # planet planet planet planet planet planet planet
     if keyevent == 'a':
         forward = -cross(forward, upward)
-        forward.rotate(1/planets[on_planet].radius, cross(forward, upward))
+        forward=forward.rotate(1/planets[on_planet].radius, -cross(forward, upward))
         #turn and turn_axis not yet adapted
         #this means the caterpillar body's legs and face will get out of sync with the planet
         turn = radians(90)
@@ -97,7 +97,7 @@ def planet_direction(forward, upward, turn, turn_axis, on_planet, head, planets)
     # planet planet planet planet planet planet planet
     if keyevent == 'd':
         forward = cross(forward, upward)
-        forward.rotate(1/planets[on_planet].radius, cross(forward, upward))
+        forward = forward.rotate(1/planets[on_planet].radius, -cross(forward, upward))
         #turn and turn_axis not yet adapted
         #this means the caterpillar body's legs and face will get out of sync with the planet
         turn = radians(90)
@@ -110,9 +110,10 @@ def planet_direction(forward, upward, turn, turn_axis, on_planet, head, planets)
         turn_axis = cross(forward, upward)
     # planet planet planet planet planet planet planet
     if keyevent == '':
-        turn_axis = cross(forward, upward)
+        turn_axis = -cross(forward, upward)
         turn = 1/planets[on_planet].radius
-        forward.rotate(1/planets[on_planet].radius, cross(forward, upward))
+        forward = forward.rotate(1/planets[on_planet].radius, -cross(forward, upward))
+        print(forward)
     # planet planet planet planet planet planet planet
     keyevent = ''
     return forward, upward, turn, turn_axis, on_planet, head, planets
@@ -150,6 +151,7 @@ def main():
                     on_planet = num1
                     core_to_head = norm(head.pos-planet.pos)*planet.radius
                     head.pos = core_to_head + planet.pos + 0.5*norm(core_to_head)
+                    caterpillar_pos[0] = head.pos
                     new_forward = norm(forward - proj(forward, core_to_head))
                     if new_forward == 0: # If incomming is vertical new_forward = 0
                         new_forward = upward
@@ -158,11 +160,11 @@ def main():
                     upward = norm(core_to_head)
                     forward = norm(new_forward)
                     turn_axis = cross(forward, upward)
-        
-        if dot(forward, upward) > 0.5:
+
+        if dot(forward, upward) > 1:
             print(forward, upward)
             return
-        
+
         old_caterpillar_pos = caterpillar_pos[:]  # Moving the caterpillar
         caterpillar_pos[0] += forward
         body[0].rotate(angle=turn, axis=turn_axis)
