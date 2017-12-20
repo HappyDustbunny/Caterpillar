@@ -8,13 +8,17 @@ keyevent = ''
 def make_head():
     ''' Make caterpillar head '''
     head_ball = sphere(color=color.orange)
-    helmet = sphere(pos=vector(.1, 0.15, 0), radius=1.2, opacity=0.3)
     left_eye = sphere(pos=vector(0.5, 0.5, -0.4), radius=0.35)
     right_eye = sphere(pos=vector(0.5, 0.5, 0.4), radius=0.35)
     left_pupil = sphere(pos=vector(0.6, 0.56, -0.42), radius=0.25, color=color.black)
     rigth_pupil = sphere(pos=vector(0.6, 0.56, 0.42), radius=0.25, color=color.black)
-    head = compound([head_ball, helmet, left_eye, right_eye, left_pupil, rigth_pupil])
+    head = compound([head_ball, left_eye, right_eye, left_pupil, rigth_pupil])
     return head
+
+def make_helmet():
+    ''' Make caterpillar head '''
+    helmet = sphere(pos=vector(.1, 0.15, 0), radius=1.2, opacity=0.3)
+    return helmet
 
 def make_body(caterpillar_pos, head):
     ''' Make caterpillar body '''
@@ -28,6 +32,20 @@ def make_body(caterpillar_pos, head):
         body_segment = compound([body_sphere, left_foot, right_foot])
         body.append(body_segment)
     return body
+
+def make_suit(caterpillar_pos, helmet):
+    ''' Make caterpillar suit '''
+    suit = [helmet]
+    for increment in range(1, 5):
+        body_sphere = sphere(pos=caterpillar_pos[increment], radius=1.1,
+                             color=color.white)
+        left_foot = sphere(pos=caterpillar_pos[increment] +
+                           vector(0, -0.6, -0.5), radius=0.4, color=color.black)
+        right_foot = sphere(pos=caterpillar_pos[increment] +
+                            vector(0, -0.6, 0.5), radius=0.4, color=color.black)
+        body_segment = compound([body_sphere, left_foot, right_foot])
+        suit.append(body_segment)
+    return suit
 
 def make_planets(number_of_planets):
     ''' Makes planets '''
@@ -82,14 +100,13 @@ def change_direction(forward, upward, turn, turn_axis):
     keyevent = ''
     return forward, upward, turn, turn_axis
 
-def planet_direction(forward, upward, turn, turn_axis, on_planet, head, planets):
+def planet_direction(forward, upward, turn, turn_axis, on_planet, planets):
     ''' Checking keyevent value and uddate direction while on planet.'''
     global keyevent
-    upward = norm(head.pos-planets[on_planet].pos)
     # planet planet planet planet planet planet planet
     if keyevent == 'a':
         forward = -cross(forward, upward)
-        forward=forward.rotate(1/planets[on_planet].radius, -cross(forward, upward))
+        forward = forward.rotate(1/planets[on_planet].radius, -cross(forward, upward))
         #turn and turn_axis not yet adapted
         #this means the caterpillar body's legs and face will get out of sync with the planet
         turn = radians(90)
@@ -116,7 +133,7 @@ def planet_direction(forward, upward, turn, turn_axis, on_planet, head, planets)
         print(forward)
     # planet planet planet planet planet planet planet
     keyevent = ''
-    return forward, upward, turn, turn_axis, on_planet, head, planets
+    return forward, upward, turn, turn_axis, on_planet, planets
 
 def main():
     ''' Main loop '''
@@ -135,6 +152,8 @@ def main():
 
     head = make_head() # Make Caterpillar head
     body = make_body(caterpillar_pos, head) # Make Caterpillar body
+    helmet = make_helmet()
+    suit = make_suit(caterpillar_pos, helmet)
     planets = make_planets(10) # Makes planets
     make_food(planets) # Distribute food on the planets
 
@@ -142,8 +161,15 @@ def main():
     on_planet = None
     while True:
         if on_planet != None:
-            forward, upward, turn, turn_axis, on_planet, head, planets = planet_direction(forward, upward, turn, turn_axis, on_planet, head, planets)
+            helmet.visible = False
+            for segment in suit:
+                segment.visible = False
+            upward = norm(head.pos-planets[on_planet].pos)
+            forward, upward, turn, turn_axis, on_planet, planets = planet_direction(forward, upward, turn, turn_axis, on_planet, planets)
         else:
+            helmet.visible = True
+            for segment in suit:
+                segment.visible = True
             forward, upward, turn, turn_axis = change_direction(forward, upward, turn, turn_axis)
 
             for num1, planet in enumerate(planets): # Checking if a planet is reached
@@ -169,12 +195,16 @@ def main():
         caterpillar_pos[0] += forward
         body[0].rotate(angle=turn, axis=turn_axis)
         body[0].pos = caterpillar_pos[0]
+        suit[0].rotate(angle=turn, axis=turn_axis)
+        suit[0].pos = caterpillar_pos[0]
         for num, segment in enumerate(body):
             if num == 0:
                 continue
             segment.pos = old_caterpillar_pos[num - 1]
+            suit[num].pos = old_caterpillar_pos[num - 1]
             # if turn > 0:
             segment.rotate(angle=turn, axis=turn_axis)
+            suit[num].rotate(angle=turn, axis=turn_axis)
             caterpillar_pos[num] = old_caterpillar_pos[num - 1]
         scene.center = caterpillar_pos[0]
         turn = 0
