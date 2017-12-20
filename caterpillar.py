@@ -158,21 +158,25 @@ def main():
                     upward = norm(core_to_head)
                     forward = norm(new_forward)
                     turn_axis = cross(forward, upward)
-
-            old_caterpillar_pos = caterpillar_pos[:]  # Moving the caterpillar
-            caterpillar_pos[0] += forward
-            body[0].rotate(angle=turn, axis=turn_axis)
-            body[0].pos = caterpillar_pos[0]
-            for num, segment in enumerate(body):
-                if num == 0:
-                    continue
-                segment.pos = old_caterpillar_pos[num - 1]
-                # if turn > 0:
-                segment.rotate(angle=turn, axis=turn_axis)
-                caterpillar_pos[num] = old_caterpillar_pos[num - 1]
-            scene.center = caterpillar_pos[0]
-            turn = 0
-            sleep(d_t)
+        
+        if dot(forward, upward) > 0.5:
+            print(forward, upward)
+            return
+        
+        old_caterpillar_pos = caterpillar_pos[:]  # Moving the caterpillar
+        caterpillar_pos[0] += forward
+        body[0].rotate(angle=turn, axis=turn_axis)
+        body[0].pos = caterpillar_pos[0]
+        for num, segment in enumerate(body):
+            if num == 0:
+                continue
+            segment.pos = old_caterpillar_pos[num - 1]
+            # if turn > 0:
+            segment.rotate(angle=turn, axis=turn_axis)
+            caterpillar_pos[num] = old_caterpillar_pos[num - 1]
+        scene.center = caterpillar_pos[0]
+        turn = 0
+        sleep(d_t)
 
 box()
 
