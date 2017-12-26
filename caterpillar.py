@@ -3,42 +3,45 @@
 from math import acos
 from vpython import *
 from caterpillar_graphics import make_body, make_food, make_head, make_helmet, make_suit, make_planets
+import winsound
 
-keyevent = ''
+key_event = ''
+
 
 def direction(event):
-    ''' Capture keyboard interupt and choose new direction and new orientation '''
+    """ Capture keyboard interupt and choose new direction and new orientation """
     # value = event.key
-    global keyevent
-    keyevent = event.key
+    global key_event
+    key_event = event.key
+
 
 def change_direction(forward, upward, turn, turn_axis):
     ''' Checking keyevent value and uddate direction if keyevent is not empty '''
-    global keyevent
-    if keyevent == 'a':
+    global key_event
+    if key_event == 'a':
         forward = -cross(forward, upward)
         turn = radians(90)
         turn_axis = upward
-    if keyevent == 'd':
+    if key_event == 'd':
         forward = cross(forward, upward)
         turn = radians(90)
         turn_axis = -upward
-    if keyevent == 'w':
+    if key_event == 'w':
         forward, upward = upward, -forward
         turn = radians(90)
         turn_axis = cross(forward, upward)
-    if keyevent == 's':
+    if key_event == 's':
         forward, upward = -upward, forward
         turn = radians(90)
         turn_axis = -cross(forward, upward)
-    keyevent = ''
+    key_event = ''
     return forward, upward, turn, turn_axis
 
 def planet_direction(forward, upward, turn, turn_axis, on_planet, planets):
     ''' Checking keyevent value and uddate direction while on planet.'''
-    global keyevent
+    global key_event
     # planet planet planet planet planet planet planet
-    if keyevent == 'a':
+    if key_event == 'a':
         forward = -cross(forward, upward)
         forward = forward.rotate(1/planets[on_planet].radius, -cross(forward, upward))
         #turn and turn_axis not yet adapted
@@ -46,7 +49,7 @@ def planet_direction(forward, upward, turn, turn_axis, on_planet, planets):
         turn = radians(90)
         turn_axis = upward
     # planet planet planet planet planet planet planet
-    if keyevent == 'd':
+    if key_event == 'd':
         forward = cross(forward, upward)
         forward = forward.rotate(1/planets[on_planet].radius, -cross(forward, upward))
         #turn and turn_axis not yet adapted
@@ -54,26 +57,26 @@ def planet_direction(forward, upward, turn, turn_axis, on_planet, planets):
         turn = radians(90)
         turn_axis = -upward
     # planet planet planet planet planet planet planet
-    if keyevent == 'w':
+    if key_event == 'w':
         forward, upward = upward, -forward
         turn = radians(90)
         on_planet = None
         turn_axis = cross(forward, upward)
     # planet planet planet planet planet planet planet
-    if keyevent == '':
+    if key_event == '':
         turn_axis = -cross(forward, upward)
         turn = 1/planets[on_planet].radius
         forward = forward.rotate(1/planets[on_planet].radius, -cross(forward, upward))
         print(forward)
     # planet planet planet planet planet planet planet
-    keyevent = ''
+    key_event = ''
     return forward, upward, turn, turn_axis, on_planet, planets
 
 def main():
     ''' Main loop '''
     scene.bind('keydown', direction)
 
-    global keyevent # Listening for key presses
+    global key_event # Listening for key presses
 
     forward = vector(1, 0, 0)
     upward = vector(0, 1, 0)
@@ -99,6 +102,7 @@ def main():
             helmet.visible = False
             for segment in suit:
                 segment.visible = False
+            winsound.PlaySound('C:\\Users\\Horn\\Documents\\Python\\futz.wav', winsound.SND_FILENAME)
             upward = norm(head.pos-planets[on_planet].pos)
             forward, upward, turn, turn_axis, on_planet, planets = planet_direction(forward, upward, turn, turn_axis, on_planet, planets)
         else:
@@ -114,7 +118,7 @@ def main():
                     head.pos = core_to_head + planet.pos + 0.5*norm(core_to_head)
                     caterpillar_pos[0] = head.pos
                     new_forward = norm(forward - proj(forward, core_to_head))
-                    if new_forward == 0: # If incomming is vertical new_forward = 0
+                    if new_forward == 0: # If incoming is vertical new_forward = 0
                         new_forward = upward
                         turn = radians(90)
                     turn = acos(dot(forward, new_forward) / (mag(forward)*mag(new_forward)))
