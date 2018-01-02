@@ -4,6 +4,7 @@ from math import acos
 from vpython import *
 from caterpillar_graphics import *
 import winsound
+import os
 
 key_event = ''
 
@@ -90,6 +91,9 @@ def main():
     planets = make_planets(10) # Makes planets
     make_food(planets) # Distribute food on the planets
 
+    cwd = os.getcwd()
+    print(cwd)  # Copy the folder CaterpillarSounds to this directory, pls
+
     d_t = 0.2
     on_planet = -1 # -1 represents when the caterpillar isn't on a planet
     while True:
@@ -98,7 +102,7 @@ def main():
                 helmet.visible = False
                 for segment in suit:
                     segment.visible = False
-            # winsound.PlaySound('C:\\Users\\Horn\\Documents\\Python\\futz.wav', winsound.SND_FILENAME)
+            winsound.PlaySound(os.path.join(cwd, 'CaterpillarSounds', 'futz.wav'), winsound.SND_FILENAME)
             upward = norm(head.pos-planets[on_planet].pos)
             forward, upward, turn, turn_axis, on_planet, planets = planet_direction(forward, upward, turn, turn_axis, on_planet, planets)
         else:
