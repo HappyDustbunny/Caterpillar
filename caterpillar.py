@@ -64,7 +64,6 @@ def planet_direction(forward, upward, turn, turn_axis, on_planet, planets):
         turn_axis = -cross(forward, upward)
         turn = 1/planets[on_planet].radius
         forward = forward.rotate(1/planets[on_planet].radius, -cross(forward, upward))
-        print(forward)
     key_event = ''
     return forward, upward, turn, turn_axis, on_planet, planets
 
@@ -99,7 +98,7 @@ def main():
                 helmet.visible = False
                 for segment in suit:
                     segment.visible = False
-            winsound.PlaySound('C:\\Users\\Horn\\Documents\\Python\\futz.wav', winsound.SND_FILENAME)
+            # winsound.PlaySound('C:\\Users\\Horn\\Documents\\Python\\futz.wav', winsound.SND_FILENAME)
             upward = norm(head.pos-planets[on_planet].pos)
             forward, upward, turn, turn_axis, on_planet, planets = planet_direction(forward, upward, turn, turn_axis, on_planet, planets)
         else:
