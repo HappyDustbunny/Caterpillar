@@ -2,7 +2,7 @@
 
 from math import acos
 from vpython import *
-from caterpillar_graphics import make_body, make_food, make_head, make_helmet, make_suit, make_planets
+from caterpillar_graphics import *
 import winsound
 
 key_event = ''
@@ -48,7 +48,6 @@ def planet_direction(forward, upward, turn, turn_axis, on_planet, planets):
         #this means the caterpillar body's legs and face will get out of sync with the planet
         turn = radians(90)
         turn_axis = upward
-    # planet planet planet planet planet planet planet
     if key_event == 'd':
         forward = cross(forward, upward)
         forward = forward.rotate(1/planets[on_planet].radius, -cross(forward, upward))
@@ -56,19 +55,16 @@ def planet_direction(forward, upward, turn, turn_axis, on_planet, planets):
         #this means the caterpillar body's legs and face will get out of sync with the planet
         turn = radians(90)
         turn_axis = -upward
-    # planet planet planet planet planet planet planet
     if key_event == 'w':
         forward, upward = upward, -forward
         turn = radians(90)
-        on_planet = None
+        on_planet = -1 # -1 represents when the caterpillar isn't on a planet
         turn_axis = cross(forward, upward)
-    # planet planet planet planet planet planet planet
     if key_event == '':
         turn_axis = -cross(forward, upward)
         turn = 1/planets[on_planet].radius
         forward = forward.rotate(1/planets[on_planet].radius, -cross(forward, upward))
         print(forward)
-    # planet planet planet planet planet planet planet
     key_event = ''
     return forward, upward, turn, turn_axis, on_planet, planets
 
@@ -96,19 +92,21 @@ def main():
     make_food(planets) # Distribute food on the planets
 
     d_t = 0.2
-    on_planet = None
+    on_planet = -1 # -1 represents when the caterpillar isn't on a planet
     while True:
-        if on_planet != None:
-            helmet.visible = False
-            for segment in suit:
-                segment.visible = False
-            winsound.PlaySound('C:\\Users\\Horn\\Documents\\Python\\futz.wav', winsound.SND_FILENAME)
+        if on_planet > -1: # -1 represents when the caterpillar isn't on a planet
+            if helmet.visible:
+                helmet.visible = False
+                for segment in suit:
+                    segment.visible = False
+            #winsound.PlaySound('C:\\Users\\Horn\\Documents\\Python\\futz.wav', winsound.SND_FILENAME)
             upward = norm(head.pos-planets[on_planet].pos)
             forward, upward, turn, turn_axis, on_planet, planets = planet_direction(forward, upward, turn, turn_axis, on_planet, planets)
         else:
-            helmet.visible = True
-            for segment in suit:
-                segment.visible = True
+            if not helmet.visible:
+                helmet.visible = True
+                for segment in suit:
+                    segment.visible = True
             forward, upward, turn, turn_axis = change_direction(forward, upward, turn, turn_axis)
 
             for num1, planet in enumerate(planets): # Checking if a planet is reached

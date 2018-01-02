@@ -1,4 +1,4 @@
-""" Graphics for catarpillar """
+""" Graphics for caterpillar """
 
 from vpython import *
 
@@ -42,7 +42,7 @@ def make_suit(caterpillar_pos, helmet):
     back_pack = box(pos=caterpillar_pos[1] + vector(0, 1.1, 0), width=1.8,
                     height=0.3, length=1, color=color.white)
     back_pack_decal = box(pos=caterpillar_pos[1] + vector(0, 1.15, 0), width=1.2,
-                    height=0.25, length=0.8, color=color.white)
+                          height=0.25, length=0.8, color=color.white)
     left_jet = cylinder(pos=caterpillar_pos[1] + vector(-0.6, 1.1, 0.9),
                         radius=0.25, length=1.1, color=color.white)
     right_jet = cylinder(pos=caterpillar_pos[1] + vector(-0.6, 1.1, -0.9),
@@ -76,8 +76,10 @@ def make_suit(caterpillar_pos, helmet):
 def make_planets(number_of_planets):
     """ Makes planets """
     planets = []
-    planet = sphere(pos=vector(50, -1, 0), radius=20, texture=textures.wood_old) # Test planet. Remove when reinstating all planets
-    planets.append(planet) # Testplanet. Remove when reinstating all planets
+    planet = sphere(pos=vector(50, -1, 0), radius=20, texture=textures.wood_old) 
+    # Test planet. Remove when reinstating all planets
+    planets.append(planet) 
+    # Test planet. Remove when reinstating all planets
     # for _ in range(number_of_planets):
     #     planet = sphere(pos=vector(int(150*random() - 50), int(150*random() - 50),
     #                                int(150*random()) - 50), radius=int(20*random()),
