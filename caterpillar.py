@@ -4,7 +4,6 @@ from math import acos
 from vpython import *
 from caterpillar_graphics import *
 import winsound
-import os
 
 key_event = ''
 
@@ -91,38 +90,35 @@ def main():
     planets = make_planets(10) # Makes planets
     make_food(planets) # Distribute food on the planets
 
-    cwd = os.getcwd()
-    print(cwd)  # Copy the folder CaterpillarSounds to this directory, pls
-
     d_t = 0.2
     on_planet = -1 # -1 represents when the caterpillar isn't on a planet
     while True:
         if on_planet > -1: # -1 represents when the caterpillar isn't on a planet
-            if helmet.visible:
-                helmet.visible = False
+            if suit[0].visible:
                 for segment in suit:
                     segment.visible = False
-            winsound.PlaySound(os.path.join(cwd, 'CaterpillarSounds', 'futz.wav'), winsound.SND_FILENAME)
-            upward = norm(head.pos-planets[on_planet].pos)
+            # winsound.PlaySound('C:\\Users\\Horn\\Documents\\Python\\futz.wav', winsound.SND_FILENAME)
+            upward = norm(body[0].pos-planets[on_planet].pos)
             forward, upward, turn, turn_axis, on_planet, planets = planet_direction(forward, upward, turn, turn_axis, on_planet, planets)
         else:
-            if not helmet.visible:
-                helmet.visible = True
+            if not suit[0].visible:
                 for segment in suit:
                     segment.visible = True
             forward, upward, turn, turn_axis = change_direction(forward, upward, turn, turn_axis)
 
             for num1, planet in enumerate(planets): # Checking if a planet is reached
-                if mag(planet.pos-head.pos) <= planet.radius:
+                if mag(planet.pos-body[0].pos) <= planet.radius:
                     on_planet = num1
-                    core_to_head = norm(head.pos-planet.pos)*planet.radius
-                    head.pos = core_to_head + planet.pos + 0.5*norm(core_to_head)
-                    caterpillar_pos[0] = head.pos
+                    core_to_head = norm(body[0].pos-planet.pos)*planet.radius
+                    body[0].pos = core_to_head + planet.pos# + 0.5*norm(core_to_head)
+                    caterpillar_pos[0] = body[0].pos
                     new_forward = norm(forward - proj(forward, core_to_head))
-                    if new_forward == 0: # If incoming is vertical new_forward = 0
-                        new_forward = upward
+                    if new_forward.equals(vector(0, 0, 0)): # If incoming is vertical new_forward = 0
+                        print("the caterpillar came in vertically")
+                        new_forward = norm(upward - proj(upward, core_to_head))
                         turn = radians(90)
-                    turn = acos(dot(forward, new_forward) / (mag(forward)*mag(new_forward)))
+                    else:
+                        turn = acos(dot(forward, new_forward) / (mag(forward)*mag(new_forward)))
                     upward = norm(core_to_head)
                     forward = norm(new_forward)
                     turn_axis = cross(forward, upward)

@@ -76,7 +76,7 @@ def make_suit(caterpillar_pos, helmet):
 def make_planets(number_of_planets):
     """ Makes planets """
     planets = []
-    planet = sphere(pos=vector(50, -1, 0), radius=20, texture=textures.wood_old) 
+    planet = sphere(pos=vector(30, 0, 0), radius=20, texture=textures.wood_old) 
     # Test planet. Remove when reinstating all planets
     planets.append(planet) 
     # Test planet. Remove when reinstating all planets
