@@ -55,7 +55,7 @@ def planet_direction(forward, upward, turn, turn_axis, on_planet, planets):
     if key_event == 'w':
         forward, upward = upward, -forward
         turn = radians(90)
-        on_planet = -1 # -1 represents when the caterpillar isn't on a planet
+        on_planet = -1  # -1 represents when the caterpillar isn't on a planet
         turn_axis = cross(forward, upward)
     if key_event == '':
         turn_axis = -cross(forward, upward)
@@ -71,10 +71,10 @@ def is_planet_reached(body, caterpillar_pos, forward, on_planet, planets, turn, 
         if mag(planet.pos - body[0].pos) <= planet.radius:
             on_planet = num1
             core_to_head = norm(body[0].pos - planet.pos) * planet.radius
-            body[0].pos = core_to_head + planet.pos  # + 0.5*norm(core_to_head)
+            body[0].pos = core_to_head + planet.pos
             caterpillar_pos[0] = body[0].pos
             new_forward = norm(forward - proj(forward, core_to_head))
-            if new_forward.equals(vector(0, 0, 0)):  # If incoming is vertical new_forward = 0
+            if new_forward.equals(vector(0, 0, 0)):  # If approach to planet is vertical new_forward = 0
                 print("the caterpillar entered vertically")
                 new_forward = norm(upward - proj(upward, core_to_head))
                 turn = radians(90)
@@ -83,7 +83,7 @@ def is_planet_reached(body, caterpillar_pos, forward, on_planet, planets, turn, 
             upward = norm(core_to_head)
             forward = norm(new_forward)
             turn_axis = cross(forward, upward)
-    return forward, on_planet, turn, turn_axis, upward
+    return body, caterpillar_pos, forward, on_planet, planets, turn, turn_axis, upward
 
 
 def move_caterpillar(body, caterpillar_pos, forward, suit, turn, turn_axis):
@@ -104,7 +104,6 @@ def move_caterpillar(body, caterpillar_pos, forward, suit, turn, turn_axis):
         caterpillar_pos[num] = old_caterpillar_pos[num - 1]
     scene.center = caterpillar_pos[0]
     turn = 0
-    sleep(0.2)
     return turn
 
 
@@ -112,7 +111,7 @@ def main():
     """ Main loop """
     scene.bind('keydown', direction)
 
-    global key_event # Listening for key presses
+    global key_event  # Listening for key presses
 
     forward = vector(1, 0, 0)
     upward = vector(0, 1, 0)
@@ -124,15 +123,15 @@ def main():
         caterpillar_pos.append(vector(-dummy, 0, 0))
 
     head = make_head()  # Make Caterpillar head
-    body = make_body(caterpillar_pos, head) # Make Caterpillar body
+    body = make_body(caterpillar_pos, head)  # Make Caterpillar body
     helmet = make_helmet()
     suit = make_suit(caterpillar_pos, helmet)
-    planets = make_planets(10) # Makes planets
+    planets = make_planets(10)  # Makes planets
     make_food(planets)  # Distribute food on the planets
 
     cwd = os.getcwd()
 
-    d_t = 0.2
+    sleep_time = 0.2  # Time between position update
     on_planet = -1  # -1 represents when the caterpillar isn't on a planet
     while True:
         if on_planet > -1:  # -1 represents when the caterpillar isn't on a planet
@@ -141,20 +140,22 @@ def main():
                     segment.visible = False
             winsound.PlaySound(os.path.join(cwd, 'CaterpillarSounds', 'futz.wav'), winsound.SND_FILENAME)
             upward = norm(body[0].pos-planets[on_planet].pos)
+            caterpillar_pos[0] += upward*(planets[on_planet].radius - mag(caterpillar_pos[0] - planets[on_planet].pos))
             forward, upward, turn, turn_axis, on_planet, planets = planet_direction(forward, upward, turn, turn_axis, on_planet, planets)
         else:
             if not suit[0].visible:
                 for segment in suit:
                     segment.visible = True
             forward, upward, turn, turn_axis = space_direction(forward, upward, turn, turn_axis)
-            forward, on_planet, turn, turn_axis, upward = is_planet_reached(body, caterpillar_pos, forward, on_planet,
-                                                                            planets, turn, turn_axis, upward)
+            body, caterpillar_pos, forward, on_planet, planets, turn, turn_axis, upward = is_planet_reached(body, caterpillar_pos, forward, on_planet,
+                                                                                                   planets, turn, turn_axis, upward)
 
         if dot(forward, upward) > 0.1:
             print(forward, upward)
             return
 
         turn = move_caterpillar(body, caterpillar_pos, forward, suit, turn, turn_axis)
+        sleep(sleep_time)
 
 
 box()
