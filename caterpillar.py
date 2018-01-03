@@ -1,9 +1,10 @@
 """ Snake clone """
 
 from math import acos
-from vpython import *
+import vpython
 from caterpillar_graphics import *
 import winsound
+import os
 
 key_event = ''
 
@@ -126,16 +127,19 @@ def main():
     body = make_body(caterpillar_pos, head) # Make Caterpillar body
     helmet = make_helmet()
     suit = make_suit(caterpillar_pos, helmet)
-    sleep(0.01)
     planets = make_planets(10) # Makes planets
     make_food(planets)  # Distribute food on the planets
 
+    cwd = os.getcwd()
+
+    d_t = 0.2
     on_planet = -1  # -1 represents when the caterpillar isn't on a planet
     while True:
         if on_planet > -1:  # -1 represents when the caterpillar isn't on a planet
             if suit[0].visible:
                 for segment in suit:
                     segment.visible = False
+            winsound.PlaySound(os.path.join(cwd, 'CaterpillarSounds', 'futz.wav'), winsound.SND_FILENAME)
             upward = norm(body[0].pos-planets[on_planet].pos)
             forward, upward, turn, turn_axis, on_planet, planets = planet_direction(forward, upward, turn, turn_axis, on_planet, planets)
         else:
