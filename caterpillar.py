@@ -106,11 +106,12 @@ def move_caterpillar(body, caterpillar_pos, forward, suit, turn, turn_axis):
     turn = 0
     return turn
 
+
 def foodcheck(planets, on_planet, body):
     """Checks if you're touching the food"""
     scorechange = 0
     for food in planets[on_planet].food:
-        if mag(body[0].pos-food.pos) <= 0.5:
+        if mag(body[0].pos-food.pos) <= 0.75:
             food.visible = False
             scorechange += 1
     return scorechange
@@ -138,8 +139,7 @@ def main():
     planets = make_planets(10)  # Makes planets
     make_food(planets)  # Distribute food on the planets
     score = 0
-    scoretext = text(text=str(score), billboard = True, emissive = True)
-
+    scoretext = text(text=str(score), billboard=True, emissive=True, color=color.green)
 
     cwd = os.getcwd()
 
@@ -151,7 +151,7 @@ def main():
                 for segment in suit:
                     segment.visible = False
             score += foodcheck(planets, on_planet, body)
-            scoretext.text = str(score)
+            # scoretext.text = str(score)
             # winsound.PlaySound(os.path.join(cwd, 'CaterpillarSounds', 'futz.wav'),
             #                    winsound.SND_FILENAME)
             upward = norm(body[0].pos-planets[on_planet].pos)
