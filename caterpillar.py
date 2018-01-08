@@ -69,7 +69,7 @@ def planet_direction(forward, upward, turn, turn_axis, on_planet, planets, body)
     return forward, upward, turn, turn_axis, on_planet, planets
 
 
-def is_planet_reached(body, caterpillar_pos, forward, on_planet, planets, turn, turn_axis, upward):
+def is_planet_reached(body, caterpillar_pos, forward, on_planet, planets, turn, turn_axis, upward, roll):
     """ Checks if a planet is reached """
     for num1, planet in enumerate(planets):
         if mag(planet.pos - body[0].pos) <= planet.radius:
@@ -85,19 +85,22 @@ def is_planet_reached(body, caterpillar_pos, forward, on_planet, planets, turn, 
                 turn = radians(90)
             else:
                 turn = acos(dot(forward, new_forward) / (mag(forward) * mag(new_forward)))
+            roll = acos(dot(upward, core_to_head)/(mag(upward)*mag(core_to_head)))
             upward = norm(core_to_head)
             forward = norm(new_forward)
             turn_axis = cross(forward, upward)
-    return body, caterpillar_pos, forward, on_planet, planets, turn, turn_axis, upward
+    return body, caterpillar_pos, forward, on_planet, planets, turn, turn_axis, upward, roll
 
 
-def move_caterpillar(body, caterpillar_pos, forward, suit, turn, turn_axis):
+def move_caterpillar(body, caterpillar_pos, forward, suit, turn, turn_axis, roll):
     """ Moving the caterpillar"""
     old_caterpillar_pos = caterpillar_pos[:]
     caterpillar_pos[0] += forward
     body[0].rotate(angle=turn, axis=turn_axis)
+    body[0].rotate(angle=roll, axis=forward)
     body[0].pos = caterpillar_pos[0]
     suit[0].rotate(angle=turn, axis=turn_axis)
+    suit[0].rotate(angle=roll, axis=forward)
     suit[0].pos = caterpillar_pos[0]
     for num, segment in enumerate(body):
         if num == 0:
@@ -105,11 +108,14 @@ def move_caterpillar(body, caterpillar_pos, forward, suit, turn, turn_axis):
         segment.pos = old_caterpillar_pos[num - 1]
         suit[num].pos = old_caterpillar_pos[num - 1]
         segment.rotate(angle=turn, axis=turn_axis)
+        segment.rotate(angle=roll, axis=forward)
         suit[num].rotate(angle=turn, axis=turn_axis)
+        suit[num].rotate(angle=roll, axis=forward)
         caterpillar_pos[num] = old_caterpillar_pos[num - 1]
     scene.center = caterpillar_pos[0]
     turn = 0
-    return turn
+    roll = 0
+    return turn, roll
 
 
 def foodcheck(planets, on_planet, body):
@@ -133,6 +139,7 @@ def main():
     forward = vector(1, 0, 0)
     upward = vector(0, 1, 0)
     turn = 0
+    roll = 0
     turn_axis = vector(0, 1, 0)
 
     caterpillar_pos = []  # Initialize Caterpillar position. Head in origo
@@ -171,14 +178,13 @@ def main():
                 for segment in suit:
                     segment.visible = True
             forward, upward, turn, turn_axis = space_direction(forward, upward, turn, turn_axis)
-            body, caterpillar_pos, forward, on_planet, planets, turn, turn_axis, upward = is_planet_reached(
-                body, caterpillar_pos, forward, on_planet, planets, turn, turn_axis, upward)
+            body, caterpillar_pos, forward, on_planet, planets, turn, turn_axis, upward, roll = is_planet_reached(body, caterpillar_pos, forward, on_planet, planets, turn, turn_axis, upward, roll)
 
         if dot(forward, upward) > 0.1:
             print(forward, upward)
             return
 
-        turn = move_caterpillar(body, caterpillar_pos, forward, suit, turn, turn_axis)
+        turn, roll = move_caterpillar(body, caterpillar_pos, forward, suit, turn, turn_axis, roll)
         sleep(sleep_time)
 
 # box()
