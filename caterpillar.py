@@ -31,7 +31,7 @@ def space_direction(forward, upward):
     return forward, upward
 
 
-def planet_direction(forward, upward, on_planet, planets, body):
+def planet_direction(forward, upward, on_planet, planets):
     """ Checking key_event value and update direction while on planet. """
     global key_event
     if key_event == 'a':
@@ -55,8 +55,8 @@ def is_planet_reached(body, caterpillar_pos, forward, on_planet, planets, upward
         if mag(planet.pos - body[0].pos) <= planet.radius:
             on_planet = num1
             core_to_head = norm(body[0].pos - planet.pos) * planet.radius
-            body[0].pos = core_to_head + planet.pos
-            caterpillar_pos[0] = body[0].pos
+            caterpillar_pos[0] = core_to_head + planet.pos
+            body[0].pos = caterpillar_pos[0]
             new_forward = norm(forward - proj(forward, core_to_head))
             if new_forward.equals(vector(0, 0, 0)):
                 # This is here to check if the approach to the planet is vertical
@@ -64,7 +64,7 @@ def is_planet_reached(body, caterpillar_pos, forward, on_planet, planets, upward
                 new_forward = norm(upward - proj(upward, core_to_head))
             upward = norm(core_to_head)
             forward = norm(new_forward)
-    return body, caterpillar_pos, forward, on_planet, planets, upward
+    return body, caterpillar_pos, forward, on_planet, upward
 
 
 def move_caterpillar(body, caterpillar_pos, forward, suit, turn_list):
@@ -107,7 +107,8 @@ def main():
     forward = vector(1, 0, 0)
     upward = vector(0, 1, 0)
 
-    v_fupward = vector(1, 1, 0)
+    v_forward = vector(1, 0, 0)
+    v_upward = vector(0, 1, 0)
     turn_list = []
     for dummy in range(5):
         turn_list.append([0, vector(0, 0, 0)])
@@ -141,26 +142,31 @@ def main():
             upward = norm(body[0].pos-planets[on_planet].pos)
             caterpillar_pos[0] += upward*(planets[on_planet].radius - mag(
                 caterpillar_pos[0] - planets[on_planet].pos)) + 0.75*upward
-            forward, upward, on_planet, planets = planet_direction(forward, upward, on_planet, planets, body)
+            forward, upward, on_planet, planets = planet_direction(forward, upward, on_planet, planets)
         else:
             if not suit[0].visible:
                 for segment in suit:
                     segment.visible = True
-            forward, upward, = space_direction(forward, upward,)
-            body, caterpillar_pos, forward, on_planet, planets, upward = is_planet_reached(
+            forward, upward = space_direction(forward, upward)
+            body, caterpillar_pos, forward, on_planet, upward = is_planet_reached(
                 body, caterpillar_pos, forward, on_planet, planets, upward)
 
         if dot(forward, upward) > 0.1:
             print(forward, upward)
             return
 
-        turn_list.insert(0, [diff_angle(v_fupward, forward + upward),
-                                cross(v_fupward, forward + upward)])
+        turn_list.insert(0, [diff_angle(v_forward, forward),
+                             norm(cross(v_forward, forward))])
         turn_list.pop()
-        v_fupward = v_fupward.rotate(turn_list[0][0], turn_list[0][1])
-        if mag(v_fupward-(forward + upward)) > 0.1:
-            print(v_fupward, forward + upward)
-            print(turn_list[0][0], turn_list[0][1])
+
+        v_forward = v_forward.rotate(turn_list[0][0], turn_list[0][1])
+        v_upward = v_upward.rotate(turn_list[0][0], turn_list[0][1])
+        if mag(v_forward-forward) > 0.1:# or mag(v_upward-upward) > 0.1:
+            print("v_forward:", v_forward)
+            print("forward:", forward)
+            print("v_upward:", v_upward)
+            print("upward:", upward)
+            print("turning stats:", turn_list[0][0], turn_list[0][1])
             print("turning error")
             return
 
