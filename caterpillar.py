@@ -125,8 +125,7 @@ def main():
     suit = make_suit(caterpillar_pos, helmet)
     planets = make_planets(10)  # Makes planets
     make_food(planets)  # Distribute food on the planets
-    # score = 0
-    # scoretext = text(text=str(score), billboard=True, emissive=True, color=color.green)
+    score = 0
 
     # cwd = os.getcwd()
 
@@ -137,8 +136,9 @@ def main():
             if suit[0].visible:
                 for segment in suit:
                     segment.visible = False
-            # score += foodcheck(planets, on_planet, body)
-            # scoretext.text = str(score)
+            score += foodcheck(planets, on_planet, body)
+            scene.caption = '<font color="blue"><font size="6">\
+                              Score: {}</font>'.format(str(score))
             # winsound.PlaySound(os.path.join(cwd, 'CaterpillarSounds', 'futz.wav'),
             #                    winsound.SND_FILENAME)
             upward = norm(body[0].pos-planets[on_planet].pos)
