@@ -46,7 +46,7 @@ def planet_direction(forward, upward, on_planet, planets):
         forward, upward = upward, -forward
         on_planet = -1  # -1 represents when the caterpillar isn't on a planet
     key_event = ''
-    return forward, upward, on_planet, planets
+    return forward, upward, on_planet
 
 
 def is_planet_reached(body, caterpillar_pos, forward, on_planet, planets, upward):
@@ -110,6 +110,8 @@ def main():
     v_forward = vector(1, 0, 0)
     v_upward = vector(0, 1, 0)
     turn_list = []
+    p_shift = False
+
     for dummy in range(5):
         turn_list.append([0, vector(0, 0, 0)])
 
@@ -142,7 +144,7 @@ def main():
             upward = norm(body[0].pos-planets[on_planet].pos)
             caterpillar_pos[0] += upward*(planets[on_planet].radius - mag(
                 caterpillar_pos[0] - planets[on_planet].pos)) + 0.75*upward
-            forward, upward, on_planet, planets = planet_direction(forward, upward, on_planet, planets)
+            forward, upward, on_planet = planet_direction(forward, upward, on_planet, planets)
         else:
             if not suit[0].visible:
                 for segment in suit:
@@ -150,14 +152,23 @@ def main():
             forward, upward = space_direction(forward, upward)
             body, caterpillar_pos, forward, on_planet, upward = is_planet_reached(
                 body, caterpillar_pos, forward, on_planet, planets, upward)
+            if on_planet >= 0:
+                p_shift = True
 
         if dot(forward, upward) > 0.1:
             print(forward, upward)
             return
-
-        turn_list.insert(0, [diff_angle(v_forward, forward),
-                             norm(cross(v_forward, forward))])
-        turn_list.pop()
+        if p_shift:
+            # Comment the text below out after a solution is found.
+            turn_list.insert(0, [diff_angle(v_forward, forward),
+                                 norm(cross(v_forward, forward))])
+            turn_list.pop()
+            # Comment the text above out after a solution is found.
+            p_shift = False
+        else:
+            turn_list.insert(0, [diff_angle(v_forward, forward),
+                                 norm(cross(v_forward, forward))])
+            turn_list.pop()
 
         v_forward = v_forward.rotate(turn_list[0][0], turn_list[0][1])
         v_upward = v_upward.rotate(turn_list[0][0], turn_list[0][1])
