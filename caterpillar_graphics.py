@@ -1,6 +1,7 @@
 """ Graphics for caterpillar """
 
 from vpython import *
+from random import random, shuffle
 
 def make_head():
     """ Make caterpillar head """
@@ -76,26 +77,36 @@ def make_suit(caterpillar_pos, helmet):
 def make_planets(number_of_planets):
     """ Makes planets """
     planets = []
-    planet = sphere(pos=vector(30, -10, 0), radius=20, texture=textures.wood_old) 
+    planet = sphere(pos=vector(30, -10, 0), radius=20, texture=textures.wood_old)
     # Test planet. Remove when reinstating all planets
-    planets.append(planet) 
+    planets.append(planet)
     # Test planet. Remove when reinstating all planets
     # for _ in range(number_of_planets):
     #     planet = sphere(pos=vector(int(150*random() - 50), int(150*random() - 50),
-    #                                int(150*random()) - 50), radius=int(20*random()),
-    #                     texture=textures.wood_old)
+    #                                int(150*random()) - 50),
+    #                     radius=int(20*random()), texture=textures.wood_old)
+    #     if norm(planet.pos).equals(vector(0, 1, 0)) or norm(planet.pos).equals(vector(0, -1, 0)):
+    #         planet.pos += vector(1, 0, 0)
     #     planets.append(planet)
     return planets
 
 def make_food(planets):
     """ Distribute food on planets """
     for planet in planets:
-        radius = planet.radius
         foods = []
-        for _ in range(int(5*random() + 5)): # makes 5-10 pellets
-            food_pos = norm(vector(random() - 0.5, random() - 0.5,
-                                   random() - 0.5))*radius + planet.pos
-            food = sphere(pos=food_pos, texture=textures.rock)
+        # for _ in range(int(5*random() + 5)): # makes 5-10 pellets
+        #     food_pos = norm(vector(random() - 0.5, random() - 0.5,
+        #                            random() - 0.5))*planet.radius + planet.pos
+        #     food = sphere(pos=food_pos, texture=textures.rock)
+        #     foods.append(food)
+        colorlist = [color.blue, color.cyan, color.green, color.magenta,
+                     color.orange, color.red, color.yellow]
+        toward_zero = norm(-planet.pos)*planet.radius
+        perp_t_zero = norm(cross(toward_zero, vector(0, 1, 0)))
+        for num in range(3):
+            shuffle(colorlist)
+            food_pos = norm(toward_zero + (perp_t_zero * (num - 1))) * planet.radius + planet.pos
+            food = cone(pos=food_pos, color=colorlist.pop(), axis=perp_t_zero)
             foods.append(food)
         planet.food = foods
     return

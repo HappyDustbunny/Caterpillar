@@ -1,6 +1,6 @@
 """ Snake clone """
 
-from math import acos
+# from math import acos
 import vpython
 from caterpillar_graphics import *
 import winsound
@@ -60,10 +60,9 @@ def is_planet_reached(body, caterpillar_pos, forward, on_planet, planets, upward
             new_forward = norm(forward - proj(forward, core_to_head))
             if new_forward.equals(vector(0, 0, 0)):
                 # This is here to check if the approach to the planet is vertical
-                print("the caterpillar entered vertically")
                 new_forward = norm(upward - proj(upward, core_to_head))
             upward = norm(core_to_head)
-            forward = norm(new_forward)
+            forward = new_forward
     return body, caterpillar_pos, forward, on_planet, upward
 
 
@@ -88,14 +87,12 @@ def move_caterpillar(body, caterpillar_pos, forward, suit, turn_list):
 
 def foodcheck(planets, on_planet, body):
     """Checks if you're touching the food"""
-    scorechange = 0
     for food in planets[on_planet].food:
         if not food.visible:
             continue
         if mag(body[0].pos-food.pos) <= 1:
             food.visible = False
-            scorechange += 1
-    return scorechange
+    return
 
 
 def main():
@@ -125,7 +122,7 @@ def main():
     suit = make_suit(caterpillar_pos, helmet)
     planets = make_planets(10)  # Makes planets
     make_food(planets)  # Distribute food on the planets
-    score = 0
+    # score = 0
 
     # cwd = os.getcwd()
 
@@ -136,9 +133,8 @@ def main():
             if suit[0].visible:
                 for segment in suit:
                     segment.visible = False
-            score += foodcheck(planets, on_planet, body)
-            scene.caption = '<font color="blue"><font size="6">\
-                              Score: {}</font>'.format(str(score))
+            foodcheck(planets, on_planet, body)
+            # scoretext.text = str(score)
             # winsound.PlaySound(os.path.join(cwd, 'CaterpillarSounds', 'futz.wav'),
             #                    winsound.SND_FILENAME)
             upward = norm(body[0].pos-planets[on_planet].pos)
@@ -183,7 +179,5 @@ def main():
 
         move_caterpillar(body, caterpillar_pos, forward, suit, turn_list)
         sleep(sleep_time)
-
-# box()
 
 main()
