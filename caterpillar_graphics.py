@@ -91,7 +91,7 @@ def make_planets(number_of_planets):
     return planets
 
 def make_food(planets):
-    """ Distribute food on planets """
+    """ Distributes food on planets """
     for planet in planets:
         foods = []
         # for _ in range(int(5*random() + 5)): # makes 5-10 pellets
@@ -105,8 +105,9 @@ def make_food(planets):
         perp_t_zero = norm(cross(toward_zero, vector(0, 1, 0)))
         for num in range(3):
             shuffle(colorlist)
-            food_pos = norm(toward_zero + (perp_t_zero * (num - 1))) * planet.radius + planet.pos
-            food = cone(pos=food_pos, color=colorlist.pop(), axis=perp_t_zero)
+            food_pos = norm(toward_zero + ((perp_t_zero * (num - 1)) * 2)
+                           ) * (planet.radius + 0.5) + planet.pos
+            food = cone(pos=food_pos, color=colorlist.pop(), axis=perp_t_zero*2)
             foods.append(food)
         planet.food = foods
     return

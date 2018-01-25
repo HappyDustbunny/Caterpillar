@@ -85,14 +85,38 @@ def move_caterpillar(body, caterpillar_pos, forward, suit, turn_list):
     scene.center = caterpillar_pos[0]
 
 
-def foodcheck(planets, on_planet, body):
+def foodshuffle(planets, on_planet, foodnum, body):
+    """Moves all food pieces to randdom places on the planet after landing"""
+    food_pos = norm(vector(random() - 0.5, random() - 0.5, random() - 0.5)
+                   ) * planets[on_planet].radius + planets[on_planet].pos
+    if mag(food_pos - body[0].pos) <= 3:
+        food_pos = foodshuffle(planets, on_planet, foodnum, body)
+    for num in range(foodnum):
+        if mag(food_pos - planets[on_planet].food[num].pos) <= 3:
+            food_pos = foodshuffle(planets, on_planet, foodnum, body)
+    return food_pos
+
+
+def foodcheck(planets, on_planet, body, targetfood):
     """Checks if you're touching the food"""
-    for food in planets[on_planet].food:
-        if not food.visible:
-            continue
-        if mag(body[0].pos-food.pos) <= 1:
-            food.visible = False
-    return
+    if targetfood >= len(planets[on_planet].food):
+        print("all food collected on this planet")
+        # this part should possibly force you off the planet
+    elif not planets[on_planet].food[targetfood].visible:
+        print("food collected in wrong order")
+        # this part should also possibly force you off the planet
+    elif mag(planets[on_planet].food[targetfood].pos - body[0].pos) <= 1:
+        planets[on_planet].food[targetfood].visible = False
+        targetfood += 1
+    else:
+        for nontargetfood in planets[on_planet].food:
+            if nontargetfood.visible and mag(body[0].pos-nontargetfood.pos) <= 1:
+                for food in planets[on_planet].food:
+                    food.visible = False
+    # for food in planets[on_planet].food:
+    #     if food.visible and mag(body[0].pos-food.pos) <= 1:
+    #         food.visible = False
+    return targetfood
 
 
 def main():
@@ -129,19 +153,7 @@ def main():
     sleep_time = 0.2  # Time between position update
     on_planet = -1  # -1 represents when the caterpillar isn't on a planet
     while True:
-        if on_planet > -1:  # -1 represents when the caterpillar isn't on a planet
-            if suit[0].visible:
-                for segment in suit:
-                    segment.visible = False
-            foodcheck(planets, on_planet, body)
-            # scoretext.text = str(score)
-            # winsound.PlaySound(os.path.join(cwd, 'CaterpillarSounds', 'futz.wav'),
-            #                    winsound.SND_FILENAME)
-            upward = norm(body[0].pos-planets[on_planet].pos)
-            caterpillar_pos[0] += upward*(planets[on_planet].radius - mag(
-                caterpillar_pos[0] - planets[on_planet].pos)) + 0.75*upward
-            forward, upward, on_planet = planet_direction(forward, upward, on_planet, planets)
-        else:
+        if on_planet == -1:  # -1 represents when the caterpillar isn't on a planet
             if not suit[0].visible:
                 for segment in suit:
                     segment.visible = True
@@ -149,7 +161,23 @@ def main():
             body, caterpillar_pos, forward, on_planet, upward = is_planet_reached(
                 body, caterpillar_pos, forward, on_planet, planets, upward)
             if on_planet >= 0:
+                for num, food in enumerate(planets[on_planet].food):
+                    food.pos = foodshuffle(planets, on_planet, num, body)
+                    food.axis = 2 * norm(food.pos - planets[on_planet].pos)
+                targetfood = 0
                 p_shift = True
+        else:
+            if suit[0].visible:
+                for segment in suit:
+                    segment.visible = False
+            targetfood = foodcheck(planets, on_planet, body, targetfood)
+            # scoretext.text = str(score)
+            # winsound.PlaySound(os.path.join(cwd, 'CaterpillarSounds', 'futz.wav'),
+            #                    winsound.SND_FILENAME)
+            upward = norm(body[0].pos-planets[on_planet].pos)
+            caterpillar_pos[0] += upward*(planets[on_planet].radius - mag(
+                caterpillar_pos[0] - planets[on_planet].pos)) + 0.75*upward
+            forward, upward, on_planet = planet_direction(forward, upward, on_planet, planets)
 
         if dot(forward, upward) > 0.1:
             print(forward, upward)
