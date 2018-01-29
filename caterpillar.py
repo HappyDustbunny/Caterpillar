@@ -31,6 +31,7 @@ def space_direction(forward, upward):
     return forward, upward
 
 
+def planet_direction(forward, upward, on_planet, planets, suit):
 def planet_direction(forward, upward, on_planet, planets, targetfood):
     """ Checking key_event value and update direction while on planet. """
     global key_event
@@ -47,15 +48,19 @@ def planet_direction(forward, upward, on_planet, planets, targetfood):
         if targetfood < len(planets[on_planet].food):
             foodorder(planets, on_planet)
         on_planet = -1  # -1 represents when the caterpillar isn't on a planet
+        for segment in suit:
+            segment.visible = True
     key_event = ''
     return forward, upward, on_planet
 
 
-def is_planet_reached(body, caterpillar_pos, forward, on_planet, planets, upward):
+def is_planet_reached(body, caterpillar_pos, forward, on_planet, planets, upward, suit):
     """ Checks if a planet is reached """
     for num1, planet in enumerate(planets):
         if mag(planet.pos - body[0].pos) <= planet.radius:
             on_planet = num1
+            for segment in suit:
+                segment.visible = False
             core_to_head = norm(body[0].pos - planet.pos) * planet.radius
             caterpillar_pos[0] = core_to_head + planet.pos
             body[0].pos = caterpillar_pos[0]
@@ -167,12 +172,9 @@ def main():
     on_planet = -1  # -1 represents when the caterpillar isn't on a planet
     while True:
         if on_planet == -1:  # -1 represents when the caterpillar isn't on a planet
-            if not suit[0].visible:
-                for segment in suit:
-                    segment.visible = True
             forward, upward = space_direction(forward, upward)
             body, caterpillar_pos, forward, on_planet, upward = is_planet_reached(
-                body, caterpillar_pos, forward, on_planet, planets, upward)
+                body, caterpillar_pos, forward, on_planet, planets, upward, suit)
             if on_planet >= 0:
                 if planets[on_planet].food[-1].visible:
                     for num, food in enumerate(planets[on_planet].food):
@@ -183,9 +185,6 @@ def main():
                     targetfood = len(planets[on_planet].food)
                 p_shift = True
         else:
-            if suit[0].visible:
-                for segment in suit:
-                    segment.visible = False
             targetfood = foodcheck(planets, on_planet, body, targetfood)
             # scoretext.text = str(score)
             # winsound.PlaySound(os.path.join(cwd, 'CaterpillarSounds', 'futz.wav'),
@@ -193,6 +192,7 @@ def main():
             upward = norm(body[0].pos-planets[on_planet].pos)
             caterpillar_pos[0] += upward*(planets[on_planet].radius - mag(
                 caterpillar_pos[0] - planets[on_planet].pos)) + 0.75*upward
+            forward, upward, on_planet = planet_direction(forward, upward, on_planet, planets, suit)
             forward, upward, on_planet = planet_direction(forward, upward, on_planet, planets, targetfood)
 
         if dot(forward, upward) > 0.1:
