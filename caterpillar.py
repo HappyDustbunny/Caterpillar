@@ -31,7 +31,7 @@ def space_direction(forward, upward):
     return forward, upward
 
 
-def planet_direction(forward, upward, on_planet, planets):
+def planet_direction(forward, upward, on_planet, planets, targetfood):
     """ Checking key_event value and update direction while on planet. """
     global key_event
     if key_event == 'a':
@@ -44,6 +44,8 @@ def planet_direction(forward, upward, on_planet, planets):
         forward = forward.rotate(1/planets[on_planet].radius, -cross(forward, upward))
     if key_event == 'w':
         forward, upward = upward, -forward
+        if targetfood < len(planets[on_planet].food):
+            foodorder(planets, on_planet)
         on_planet = -1  # -1 represents when the caterpillar isn't on a planet
     key_event = ''
     return forward, upward, on_planet
@@ -97,6 +99,17 @@ def foodshuffle(planets, on_planet, foodnum, body):
     return food_pos
 
 
+def foodorder(planets, on_planet):
+    """Puts all the food back in its place after leaving a planet
+    without having picked up all the food in the correct order"""
+    toward_zero = norm(-planets[on_planet].pos)*planets[on_planet].radius
+    perp_to_zero = norm(cross(toward_zero, vector(0, -1, 0)))
+    for num, food in enumerate(planets[on_planet].food):
+        food.pos = norm(toward_zero + (perp_to_zero*(num-1)*2)
+                       ) * (planets[on_planet].radius+0.5) + planets[on_planet].pos
+        food.axis = perp_to_zero*2
+        food.visible = True
+
 def foodcheck(planets, on_planet, body, targetfood):
     """Checks if you're touching the food"""
     if targetfood >= len(planets[on_planet].food):
@@ -123,7 +136,7 @@ def main():
     """ Main loop """
     scene.bind('keydown', direction)
 
-    global key_event  # Listening for key presses
+    #global key_event  # Listening for key presses
 
     forward = vector(1, 0, 0)
     upward = vector(0, 1, 0)
@@ -161,10 +174,13 @@ def main():
             body, caterpillar_pos, forward, on_planet, upward = is_planet_reached(
                 body, caterpillar_pos, forward, on_planet, planets, upward)
             if on_planet >= 0:
-                for num, food in enumerate(planets[on_planet].food):
-                    food.pos = foodshuffle(planets, on_planet, num, body)
-                    food.axis = 2 * norm(food.pos - planets[on_planet].pos)
-                targetfood = 0
+                if planets[on_planet].food[-1].visible:
+                    for num, food in enumerate(planets[on_planet].food):
+                        food.pos = foodshuffle(planets, on_planet, num, body)
+                        food.axis = 2 * norm(food.pos - planets[on_planet].pos)
+                    targetfood = 0
+                else:
+                    targetfood = len(planets[on_planet].food)
                 p_shift = True
         else:
             if suit[0].visible:
@@ -177,7 +193,7 @@ def main():
             upward = norm(body[0].pos-planets[on_planet].pos)
             caterpillar_pos[0] += upward*(planets[on_planet].radius - mag(
                 caterpillar_pos[0] - planets[on_planet].pos)) + 0.75*upward
-            forward, upward, on_planet = planet_direction(forward, upward, on_planet, planets)
+            forward, upward, on_planet = planet_direction(forward, upward, on_planet, planets, targetfood)
 
         if dot(forward, upward) > 0.1:
             print(forward, upward)
