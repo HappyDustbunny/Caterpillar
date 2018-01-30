@@ -94,18 +94,19 @@ def make_food(planets):
     """ Distributes food on planets """
     for planet in planets:
         foods = []
+        number_of_food = 3
         # for _ in range(int(5*random() + 5)): # makes 5-10 pellets
         #     food_pos = norm(vector(random() - 0.5, random() - 0.5,
         #                            random() - 0.5))*planet.radius + planet.pos
         #     food = sphere(pos=food_pos, texture=textures.rock)
         #     foods.append(food)
         colorlist = [color.blue, color.cyan, color.green, color.magenta,
-                     color.orange, color.red, color.yellow]
+                     color.orange, color.red, color.yellow, color.black, color.white]
         toward_zero = norm(-planet.pos)*planet.radius
         perp_to_zero = norm(cross(toward_zero, vector(0, -1, 0)))
-        for num in range(3):
+        for num in range(number_of_food):
             shuffle(colorlist)
-            food_pos = norm(toward_zero + ((perp_to_zero * (num - 1)) * 2)
+            food_pos = norm(toward_zero + ((perp_to_zero * (num - number_of_food/2)) * 2)
                            ) * (planet.radius + 0.5) + planet.pos
             food = cone(pos=food_pos, color=colorlist.pop(), axis=perp_to_zero*2)
             foods.append(food)

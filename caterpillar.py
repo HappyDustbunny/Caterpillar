@@ -31,9 +31,10 @@ def space_direction(forward, upward):
     key_event = ''
     return forward, upward
 
-def planet_direction(forward, upward, on_planet, planets, suit, targetfood):
+def planet_direction(forward, upward, on_planet, planets):
     """ Checking key_event value and update direction while on planet. """
     global key_event
+    p_shift = False
     if key_event == 'a':
         forward = -cross(forward, upward)
         forward = forward.rotate(1/planets[on_planet].radius, -cross(forward, upward))
@@ -44,13 +45,9 @@ def planet_direction(forward, upward, on_planet, planets, suit, targetfood):
         forward = forward.rotate(1/planets[on_planet].radius, -cross(forward, upward))
     if key_event == 'w':  # Leaving planet
         forward, upward = upward, -forward
-        if targetfood < len(planets[on_planet].food):
-            foodorder(planets, on_planet)
-        on_planet = -1  # -1 represents when the caterpillar isn't on a planet
-        for segment in suit:
-            segment.visible = True
+        p_shift = True
     key_event = ''
-    return forward, upward, on_planet
+    return forward, upward, p_shift
 
 
 def is_planet_reached(body, caterpillar_pos, forward, on_planet, planets, upward, suit, turn_list):
@@ -58,13 +55,11 @@ def is_planet_reached(body, caterpillar_pos, forward, on_planet, planets, upward
     for num1, planet in enumerate(planets):
         if mag(planet.pos - body[0].pos) <= planet.radius:  # Arriving at planet
             on_planet = num1
-            for segment in suit:
-                segment.visible = False
             core_to_head = norm(body[0].pos - planet.pos) * planet.radius
             caterpillar_pos[0] = core_to_head + planet.pos
             body[0].pos = caterpillar_pos[0]
             new_forward = norm(forward - proj(forward, core_to_head))
-            if new_forward.equals(vector(0, 0, 0)):  # Check if the approach to the planet is vertical
+            if new_forward.equals(vector(0, 0, 0)):# Check if the approach to the planet is vertical
                 new_forward = norm(upward - proj(upward, core_to_head))
             turn_list.insert(0, [diff_angle(upward, new_forward), cross(forward, upward)])  # Pitch
             turn_list.pop()
@@ -196,6 +191,8 @@ def main():
                     targetfood = 0
                 else:
                     targetfood = len(planets[on_planet].food)
+                for segment in suit:
+                    segment.visible = False
                 p_shift = True
         else:
             targetfood = foodcheck(planets, on_planet, body, targetfood)
@@ -205,10 +202,19 @@ def main():
             upward = norm(body[0].pos-planets[on_planet].pos)
             caterpillar_pos[0] += upward*(planets[on_planet].radius - mag(
                 caterpillar_pos[0] - planets[on_planet].pos)) + 0.75*upward
-            forward, upward, on_planet = planet_direction(forward, upward, on_planet, planets, suit, targetfood)
+            forward, upward, p_shift = planet_direction(forward, upward, on_planet, planets)
+            if p_shift:
+                if targetfood < len(planets[on_planet].food):
+                    foodorder(planets, on_planet)
+                on_planet = -1  # -1 represents when the caterpillar isn't on a planet
+                for segment in suit:
+                    segment.visible = True
+                p_shift = False
 
         if dot(forward, upward) > 0.1:
-            print(forward, upward)
+            print("forward and upward are no longer perpendicular")
+            print("forward:", forward)
+            print("upward:", upward)
             return
         if p_shift:
             # Comment the text below out after a solution is found.
