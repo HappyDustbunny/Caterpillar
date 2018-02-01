@@ -3,60 +3,69 @@
 from vpython import *
 from random import random, shuffle
 
-def make_head():
+def make_head(caterpillar_pos, forward, upward):
     """ Make caterpillar head """
-    head_ball = sphere(color=color.orange)
-    left_eye = sphere(pos=vector(0.5, 0.5, -0.4), radius=0.35)
-    right_eye = sphere(pos=vector(0.5, 0.5, 0.4), radius=0.35)
-    left_pupil = sphere(pos=vector(0.6, 0.56, -0.42), radius=0.25, color=color.black)
-    right_pupil = sphere(pos=vector(0.6, 0.56, 0.42), radius=0.25, color=color.black)
+    right = cross(forward, upward)
+    head_ball = sphere(pos=caterpillar_pos[0], color=color.orange)
+    left_eye = sphere(pos=caterpillar_pos[0] + 0.5*forward + 0.5*upward - 
+                      0.4*right, radius=0.35)
+    right_eye = sphere(pos=caterpillar_pos[0] + 0.5*forward + 0.5*upward +
+                       0.4*right, radius=0.35)
+    left_pupil = sphere(pos=caterpillar_pos[0] + 0.6*forward + 0.56*upward - 0.42*right,
+                        radius=0.25, color=color.black)
+    right_pupil = sphere(pos=caterpillar_pos[0] + 0.6*forward + 0.56*upward
+                         + 0.42*right, radius=0.25, color=color.black)
     head = compound([head_ball, left_eye, right_eye, left_pupil, right_pupil])
     return head
 
-def make_helmet():
+def make_helmet(caterpillar_pos, forward, upward):
     """ Make caterpillar helmet """
-    helmet = sphere(pos=vector(.1, 0.15, 0), radius=1.2, opacity=0.3)
+    right = cross(forward, upward)
+    helmet = sphere(pos=caterpillar_pos[0] + 0.1*forward + 0.15*upward - 
+                    0*right, radius=1.2, opacity=0.3)
     return helmet
 
-def make_body(caterpillar_pos, head):
+def make_body(caterpillar_pos, head, forward, upward):
     """ Make caterpillar body """
     body = [head]
+    right = cross(forward, upward)
     for increment in range(1, 5):
         body_sphere = sphere(pos=caterpillar_pos[increment], color=color.blue)
-        left_foot = sphere(pos=caterpillar_pos[increment] +
-                           vector(0, -0.6, -0.5), radius=0.3, color=color.orange)
-        right_foot = sphere(pos=caterpillar_pos[increment] +
-                            vector(0, -0.6, 0.5), radius=0.3, color=color.orange)
+        left_foot = sphere(pos=caterpillar_pos[increment] + 0*forward -
+                           0.6*upward - 0.5*right, radius=0.3, color=color.orange)
+        right_foot = sphere(pos=caterpillar_pos[increment] + 0*forward -
+                            0.6*upward + 0.5*right, radius=0.3, color=color.orange)
         body_segment = compound([body_sphere, left_foot, right_foot])
         body.append(body_segment)
     return body
 
-def make_suit(caterpillar_pos, helmet):
+def make_suit(caterpillar_pos, helmet, forward, upward):
     """ Make caterpillar suit """
     suit = [helmet]
+    right = cross(forward, upward)
     body_sphere = sphere(pos=caterpillar_pos[1], radius=1.1,
                          color=color.white)
-    left_foot = sphere(pos=caterpillar_pos[1] +
-                       vector(0, -0.6, -0.5), radius=0.4, color=color.black)
-    right_foot = sphere(pos=caterpillar_pos[1] +
-                        vector(0, -0.6, 0.5), radius=0.4, color=color.black)
+    left_foot = sphere(pos=caterpillar_pos[1] + 0*forward -
+                       0.6*upward - 0.5*right, radius=0.4, color=color.black)
+    right_foot = sphere(pos=caterpillar_pos[1] +  0*forward -
+                        0.6*upward + 0.5*right, radius=0.4, color=color.black)
     back_pack = box(pos=caterpillar_pos[1] + vector(0, 1.1, 0), width=1.8,
                     height=0.3, length=1, color=color.white)
-    back_pack_decal = box(pos=caterpillar_pos[1] + vector(0, 1.15, 0), width=1.2,
+    back_pack_decal = box(pos=caterpillar_pos[1] +  0*forward + 1.15*upward + 0*right, width=1.2,
                           height=0.25, length=0.8, color=color.white)
-    left_jet = cylinder(pos=caterpillar_pos[1] + vector(-0.6, 1.1, 0.9),
+    left_jet = cylinder(pos=caterpillar_pos[1] - 0.6*forward + 1.1*upward + 0.9*right,
                         radius=0.25, length=1.1, color=color.white)
-    right_jet = cylinder(pos=caterpillar_pos[1] + vector(-0.6, 1.1, -0.9),
+    right_jet = cylinder(pos=caterpillar_pos[1] - 0.6*forward + 1.1*upward - 0.9*right,
                          radius=0.25, length=1.1, color=color.white)
-    left_jet_cap = sphere(pos=caterpillar_pos[1] + vector(0.5, 1.1, 0.9),
+    left_jet_cap = sphere(pos=caterpillar_pos[1] + 0.5*forward + 1.1*upward + 0.9*right,
                           radius=0.25, color=color.white)
-    right_jet_cap = sphere(pos=caterpillar_pos[1] + vector(0.5, 1.1, -0.9),
+    right_jet_cap = sphere(pos=caterpillar_pos[1] + 0.5*forward + 1.1*upward - 0.9*right,
                            radius=0.25, color=color.white)
-    left_jet_nozzle = cone(pos=caterpillar_pos[1] + vector(-0.9, 1.1, 0.9),
+    left_jet_nozzle = cone(pos=caterpillar_pos[1] -0.9*forward + 1.1*upward + 0.9*right,
                            radius=0.25, color=color.black)
-    right_jet_nozzle = cone(pos=caterpillar_pos[1] + vector(-0.9, 1.1, -0.9),
+    right_jet_nozzle = cone(pos=caterpillar_pos[1] -0.9*forward + 1.1*upward - 0.9*right,
                             radius=0.25, color=color.black)
-    back_pack_offset = box(pos=caterpillar_pos[1] + vector(0, -1.1, 0), width=1.8,
+    back_pack_offset = box(pos=caterpillar_pos[1] + 0*forward - 1.1*upward + 0*right, width=1.8,
                            height=0.3, length=1, opacity=0)
     body_segment = compound([body_sphere, left_foot, right_foot, back_pack,
                              left_jet, right_jet, left_jet_cap, right_jet_cap,
@@ -66,10 +75,10 @@ def make_suit(caterpillar_pos, helmet):
     for increment in range(2, 5):
         body_sphere = sphere(pos=caterpillar_pos[increment], radius=1.1,
                              color=color.white)
-        left_foot = sphere(pos=caterpillar_pos[increment] +
-                           vector(0, -0.6, -0.5), radius=0.4, color=color.black)
-        right_foot = sphere(pos=caterpillar_pos[increment] +
-                            vector(0, -0.6, 0.5), radius=0.4, color=color.black)
+        left_foot = sphere(pos=caterpillar_pos[increment] + 0*forward -
+                           0.6*upward - 0.5*right, radius=0.4, color=color.black)
+        right_foot = sphere(pos=caterpillar_pos[increment] + 0*forward -
+                            0.6*upward + 0.5*right, radius=0.4, color=color.black)
         body_segment = compound([body_sphere, left_foot, right_foot])
         suit.append(body_segment)
     return suit

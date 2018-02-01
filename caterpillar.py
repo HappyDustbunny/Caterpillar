@@ -31,7 +31,7 @@ def space_direction(forward, upward):
     key_event = ''
     return forward, upward
 
-def planet_direction(forward, upward, on_planet, planets):
+def planet_direction(forward, upward, on_planet, planets, suit, targetfood):
     """ Checking key_event value and update direction while on planet. """
     global key_event
     p_shift = False
@@ -45,7 +45,11 @@ def planet_direction(forward, upward, on_planet, planets):
         forward = forward.rotate(1/planets[on_planet].radius, -cross(forward, upward))
     if key_event == 'w':  # Leaving planet
         forward, upward = upward, -forward
-        p_shift = True
+        if targetfood < len(planets[on_planet].food):
+            foodorder(planets, on_planet)
+        on_planet = -1  # -1 represents when the caterpillar isn't on a planet
+        for segment in suit:
+            segment.visible = True
     key_event = ''
     return forward, upward, p_shift
 
@@ -55,23 +59,28 @@ def is_planet_reached(body, caterpillar_pos, forward, on_planet, planets, upward
     for num1, planet in enumerate(planets):
         if mag(planet.pos - body[0].pos) <= planet.radius:  # Arriving at planet
             on_planet = num1
+            for segment in body:
+                segment.visible = False
+            for segment in suit:
+                segment.visible = False
             core_to_head = norm(body[0].pos - planet.pos) * planet.radius
             caterpillar_pos[0] = core_to_head + planet.pos
             body[0].pos = caterpillar_pos[0]
+            # tilt = proj(core_to_head, upward) + proj(core_to_head, cross(forward, upward))
+            # turn_list.insert(0, [diff_angle(upward, tilt), cross(upward, tilt)])  # Roll
+            # turn_list.pop()
+            # rotate_caterpillar(body, suit, turn_list)
             new_forward = norm(forward - proj(forward, core_to_head))
             if new_forward.equals(vector(0, 0, 0)):# Check if the approach to the planet is vertical
                 new_forward = norm(upward - proj(upward, core_to_head))
-            turn_list.insert(0, [diff_angle(upward, new_forward), cross(forward, upward)])  # Pitch
-            turn_list.pop()
-            rotate_caterpillar(body, suit, turn_list)
-            arrow(pos=caterpillar_pos[0], axis=upward)
-            upward = upward.rotate(pi/2 - turn_list[0][0], turn_list[0][1])
-            arrow(pos=caterpillar_pos[0], axis=upward, color=color.yellow)
-            turn_list.insert(0, [diff_angle(upward, core_to_head), forward])  # Roll
-            turn_list.pop()
-            rotate_caterpillar(body, suit, turn_list)
+            # turn_list.insert(0, [diff_angle(new_upward, new_forward), cross(new_forward, new_upward)])  # Pitch
+            # turn_list.pop()
+            # rotate_caterpillar(body, suit, turn_list)
             upward = norm(core_to_head)
             forward = new_forward
+            print('new forward, upward', forward, upward)
+            head = make_head(caterpillar_pos, forward, upward)  # Make Caterpillar head
+            body = make_body(caterpillar_pos, head, forward, upward)  # Make Caterpillar body
     return body, caterpillar_pos, forward, on_planet, upward, turn_list
 
 def rotate_caterpillar(body, suit, turn_list):
@@ -166,10 +175,10 @@ def main():
     for dummy in range(5):
         caterpillar_pos.append(vector(-dummy, 0, 0))
 
-    head = make_head()  # Make Caterpillar head
-    body = make_body(caterpillar_pos, head)  # Make Caterpillar body
-    helmet = make_helmet()
-    suit = make_suit(caterpillar_pos, helmet)
+    head = make_head(caterpillar_pos, forward, upward)  # Make Caterpillar head
+    body = make_body(caterpillar_pos, head, forward, upward)  # Make Caterpillar body
+    helmet = make_helmet(caterpillar_pos, forward, upward)
+    suit = make_suit(caterpillar_pos, helmet, forward, upward)
     planets = make_planets(10)  # Makes planets
     make_food(planets)  # Distribute food on the planets
     # score = 0
@@ -212,9 +221,7 @@ def main():
                 p_shift = False
 
         if dot(forward, upward) > 0.1:
-            print("forward and upward are no longer perpendicular")
-            print("forward:", forward)
-            print("upward:", upward)
+            print('forward and upward is not perpendicular', forward, upward)
             return
         if p_shift:
             # Comment the text below out after a solution is found.
