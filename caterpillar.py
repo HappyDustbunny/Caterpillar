@@ -2,10 +2,11 @@
 
 # from math import acos
 import vpython
-from caterpillar_graphics import *
 from math import pi
 import winsound
 import os
+from random import random, shuffle
+from caterpillar_graphics import *
 
 key_event = ''
 
@@ -31,7 +32,7 @@ def space_direction(forward, upward):
     key_event = ''
     return forward, upward
 
-def planet_direction(forward, upward, on_planet, planets, suit, targetfood):
+def planet_direction(forward, upward, on_planet, planets):
     """ Checking key_event value and update direction while on planet. """
     global key_event
     p_shift = False
@@ -45,11 +46,7 @@ def planet_direction(forward, upward, on_planet, planets, suit, targetfood):
         forward = forward.rotate(1/planets[on_planet].radius, -cross(forward, upward))
     if key_event == 'w':  # Leaving planet
         forward, upward = upward, -forward
-        if targetfood < len(planets[on_planet].food):
-            foodorder(planets, on_planet)
-        on_planet = -1  # -1 represents when the caterpillar isn't on a planet
-        for segment in suit:
-            segment.visible = True
+        p_shift = True
     key_event = ''
     return forward, upward, p_shift
 
@@ -109,15 +106,15 @@ def move_caterpillar(body, caterpillar_pos, forward, suit, turn_list):
     scene.center = caterpillar_pos[0]
 
 
-def foodshuffle(planets, on_planet, foodnum, body):
+def foodscatter(planets, on_planet, foodnum, body):
     """Moves all food pieces to randdom places on the planet after landing"""
     food_pos = norm(vector(random() - 0.5, random() - 0.5, random() - 0.5)
                    ) * planets[on_planet].radius + planets[on_planet].pos
     if mag(food_pos - body[0].pos) <= 3:
-        food_pos = foodshuffle(planets, on_planet, foodnum, body)
+        food_pos = foodscatter(planets, on_planet, foodnum, body)
     for num in range(foodnum):
         if mag(food_pos - planets[on_planet].food[num].pos) <= 3:
-            food_pos = foodshuffle(planets, on_planet, foodnum, body)
+            food_pos = foodscatter(planets, on_planet, foodnum, body)
     return food_pos
 
 
@@ -126,29 +123,39 @@ def foodorder(planets, on_planet):
     without having picked up all the food in the correct order"""
     toward_zero = norm(-planets[on_planet].pos)*planets[on_planet].radius
     perp_to_zero = norm(cross(toward_zero, vector(0, -1, 0)))
+    colorlist = [color.blue, color.cyan, color.green, color.magenta, color.orange,
+                 color.red, color.yellow, color.black, color.white]
     # Test comment
     for num, food in enumerate(planets[on_planet].food):
+        shuffle(colorlist)
         food.pos = norm(toward_zero + (perp_to_zero*(num-1)*2)
                        ) * (planets[on_planet].radius+0.5) + planets[on_planet].pos
         food.axis = perp_to_zero*2
+        food.color = colorlist.pop()
         food.visible = True
 
 def foodcheck(planets, on_planet, body, targetfood):
     """Checks if you're touching the food"""
+    global key_event
     if targetfood >= len(planets[on_planet].food):
         print("all food collected on this planet")
+        key_event = "w"
         # this part should possibly force you off the planet
     elif not planets[on_planet].food[targetfood].visible:
         print("food collected in wrong order")
+        key_event = "w"
         # this part should also possibly force you off the planet
     elif mag(planets[on_planet].food[targetfood].pos - body[0].pos) <= 1:
         planets[on_planet].food[targetfood].visible = False
         targetfood += 1
+        if targetfood >= len(planets[on_planet].food):
+            print("all food collected on this planet")
+            key_event = "w"
     else:
         for nontargetfood in planets[on_planet].food:
             if nontargetfood.visible and mag(body[0].pos-nontargetfood.pos) <= 1:
-                for food in planets[on_planet].food:
-                    food.visible = False
+                print("food collected in wrong order")
+                key_event = "w"
     # for food in planets[on_planet].food:
     #     if food.visible and mag(body[0].pos-food.pos) <= 1:
     #         food.visible = False
@@ -196,7 +203,7 @@ def main():
             if on_planet >= 0:
                 if planets[on_planet].food[-1].visible:
                     for num, food in enumerate(planets[on_planet].food):
-                        food.pos = foodshuffle(planets, on_planet, num, body)
+                        food.pos = foodscatter(planets, on_planet, num, body)
                         food.axis = 2 * norm(food.pos - planets[on_planet].pos)
                     targetfood = 0
                 else:
