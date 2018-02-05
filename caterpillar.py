@@ -122,6 +122,7 @@ def foodorder(planets, on_planet):
     without having picked up all the food in the correct order"""
     toward_zero = norm(-planets[on_planet].pos)*planets[on_planet].radius
     perp_to_zero = norm(cross(toward_zero, vector(0, -1, 0)))
+    # Test comment
     for num, food in enumerate(planets[on_planet].food):
         food.pos = norm(toward_zero + (perp_to_zero*(num-1)*2)
                        ) * (planets[on_planet].radius+0.5) + planets[on_planet].pos
