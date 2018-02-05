@@ -31,7 +31,7 @@ def space_direction(forward, upward):
     key_event = ''
     return forward, upward
 
-def planet_direction(forward, upward, on_planet, planets, suit, targetfood):
+def planet_direction(forward, upward, on_planet, planets):
     """ Checking key_event value and update direction while on planet. """
     global key_event
     p_shift = False
@@ -45,11 +45,7 @@ def planet_direction(forward, upward, on_planet, planets, suit, targetfood):
         forward = forward.rotate(1/planets[on_planet].radius, -cross(forward, upward))
     if key_event == 'w':  # Leaving planet
         forward, upward = upward, -forward
-        if targetfood < len(planets[on_planet].food):
-            foodorder(planets, on_planet)
-        on_planet = -1  # -1 represents when the caterpillar isn't on a planet
-        for segment in suit:
-            segment.visible = True
+        p_shift = True
     key_event = ''
     return forward, upward, p_shift
 
