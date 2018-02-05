@@ -123,12 +123,11 @@ def foodorder(planets, on_planet):
     without having picked up all the food in the correct order"""
     toward_zero = norm(-planets[on_planet].pos)*planets[on_planet].radius
     perp_to_zero = norm(cross(toward_zero, vector(0, -1, 0)))
-    colorlist = [color.blue, color.cyan, color.green, color.magenta, color.orange,
-                 color.red, color.yellow, color.black, color.white]
-    # Test comment
+    colorlist = [color.blue, color.cyan, color.green, color.magenta, 
+                 color.orange, color.red, color.yellow, color.white]
     for num, food in enumerate(planets[on_planet].food):
         shuffle(colorlist)
-        food.pos = norm(toward_zero + (perp_to_zero*(num-1)*2)
+        food.pos = norm(toward_zero + (perp_to_zero*(num*2-len(planets[on_planet].food)))
                        ) * (planets[on_planet].radius+0.5) + planets[on_planet].pos
         food.axis = perp_to_zero*2
         food.color = colorlist.pop()
@@ -138,23 +137,21 @@ def foodcheck(planets, on_planet, body, targetfood):
     """Checks if you're touching the food"""
     global key_event
     if targetfood >= len(planets[on_planet].food):
-        print("all food collected on this planet")
+        print("All food collected on this planet.")
         key_event = "w"
-        # this part should possibly force you off the planet
     elif not planets[on_planet].food[targetfood].visible:
-        print("food collected in wrong order")
+        print("If you see this error message, something went wrong, but not catastrophically so.")
         key_event = "w"
-        # this part should also possibly force you off the planet
     elif mag(planets[on_planet].food[targetfood].pos - body[0].pos) <= 1:
         planets[on_planet].food[targetfood].visible = False
         targetfood += 1
         if targetfood >= len(planets[on_planet].food):
-            print("all food collected on this planet")
+            print("All food collected on this planet.")
             key_event = "w"
     else:
         for nontargetfood in planets[on_planet].food:
             if nontargetfood.visible and mag(body[0].pos-nontargetfood.pos) <= 1:
-                print("food collected in wrong order")
+                print("Food collected in wrong order.")
                 key_event = "w"
     # for food in planets[on_planet].food:
     #     if food.visible and mag(body[0].pos-food.pos) <= 1:

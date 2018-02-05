@@ -110,12 +110,12 @@ def make_food(planets):
         #     food = sphere(pos=food_pos, texture=textures.rock)
         #     foods.append(food)
         colorlist = [color.blue, color.cyan, color.green, color.magenta,
-                     color.orange, color.red, color.yellow, color.black, color.white]
+                     color.orange, color.red, color.yellow, color.white]
         toward_zero = norm(-planet.pos)*planet.radius
         perp_to_zero = norm(cross(toward_zero, vector(0, -1, 0)))
         for num in range(number_of_food):
             shuffle(colorlist)
-            food_pos = norm(toward_zero + ((perp_to_zero * (num - number_of_food/2)) * 2)
+            food_pos = norm(toward_zero + (perp_to_zero * (num - number_of_food/2) * 2)
                            ) * (planet.radius + 0.5) + planet.pos
             food = cone(pos=food_pos, color=colorlist.pop(), axis=perp_to_zero*2)
             foods.append(food)
