@@ -83,20 +83,26 @@ def make_suit(caterpillar_pos, helmet, forward, upward):
         suit.append(body_segment)
     return suit
 
+def put_planet(planet, previousplanets):
+    """Randomises the positions of a planet"""
+    planet.pos = vector(int(150*random() - 50), int(150*random() - 50), int(150*random()) - 50)
+    if norm(planet.pos).equals(vector(0, 1, 0)) or norm(planet.pos).equals(vector(0, -1, 0)):
+        planet.pos += vector(1, 0, 0)
+    for otherplanet in previousplanets:
+        if mag(planet.pos - otherplanet.pos) < planet.radius + otherplanet.radius + 5\
+        or mag(planet.pos) < planet.radius + 10:
+            put_planet(planet, previousplanets)
+
 def make_planets(number_of_planets):
     """ Makes planets """
     planets = []
-    planet = sphere(pos=vector(40, -10, 0), radius=20, texture=textures.wood_old)
-    # Test planet. Remove when reinstating all planets
-    planets.append(planet)
-    # Test planet. Remove when reinstating all planets
-    # for _ in range(number_of_planets):
-    #     planet = sphere(pos=vector(int(150*random() - 50), int(150*random() - 50),
-    #                                int(150*random()) - 50),
-    #                     radius=int(20*random()), texture=textures.wood_old)
-    #     if norm(planet.pos).equals(vector(0, 1, 0)) or norm(planet.pos).equals(vector(0, -1, 0)):
-    #         planet.pos += vector(1, 0, 0)
-    #     planets.append(planet)
+    # planet = sphere(pos=vector(40, -10, 0), radius=20, texture=textures.wood_old)
+    # # Test planet. Remove when reinstating all planets
+    # planets.append(planet)
+    for _ in range(number_of_planets):
+        planet = sphere(pos=vector(0, 0, 0), radius=int(20*(random()+0.25)), texture=textures.wood_old)
+        put_planet(planet, planets)
+        planets.append(planet)
     return planets
 
 def make_food(planets):
@@ -115,7 +121,7 @@ def make_food(planets):
         perp_to_zero = norm(cross(toward_zero, vector(0, -1, 0)))
         for num in range(number_of_food):
             shuffle(colorlist)
-            food_pos = norm(toward_zero + (perp_to_zero * (num - number_of_food/2) * 2)
+            food_pos = norm(toward_zero + perp_to_zero * (num * 2 - number_of_food)
                            ) * (planet.radius + 0.5) + planet.pos
             food = cone(pos=food_pos, color=colorlist.pop(), axis=perp_to_zero*2)
             foods.append(food)
