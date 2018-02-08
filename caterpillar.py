@@ -228,9 +228,12 @@ def main():
     suit = make_suit(cat.pos, cat.forward, cat.upward)  # Make space suit
     planets = make_planets(10)  # Make planets
     make_food(planets)  # Distribute food on the planets
-
+    
     # cwd = os.getcwd()
     score = 0
+    scene.caption = "Score:" + str(score)
+    scene.camera.follow(body[0])
+
     scene.caption = "Score:" + str(score)
     scene.camera.follow(body[0])
 
