@@ -38,12 +38,12 @@ def planet_direction(forward, upward, on_planet, planets):
     p_shift = False
     if key_event == 'a':
         forward = -cross(forward, upward)
-        forward = forward.rotate(1/planets[on_planet].radius, -cross(forward, upward))
+        forward = forward.rotate(1/(planets[on_planet].radius + 0.75), -cross(forward, upward))
     if key_event == 'd':
         forward = cross(forward, upward)
-        forward = forward.rotate(1/planets[on_planet].radius, -cross(forward, upward))
+        forward = forward.rotate(1/(planets[on_planet].radius + 0.75), -cross(forward, upward))
     if key_event == '':
-        forward = forward.rotate(1/planets[on_planet].radius, -cross(forward, upward))
+        forward = forward.rotate(1/(planets[on_planet].radius + 0.75), -cross(forward, upward))
     if key_event == 'w':  # Leaving planet
         forward, upward = upward, -forward
         p_shift = True
@@ -63,18 +63,15 @@ def is_planet_reached(body, caterpillar_pos, forward, on_planet, planets, upward
             core_to_head = norm(body[0].pos - planet.pos) * planet.radius
             caterpillar_pos[0] = core_to_head + planet.pos
             body[0].pos = caterpillar_pos[0]
-            # tilt = proj(core_to_head, upward) + proj(core_to_head, cross(forward, upward))
-            # turn_list.insert(0, [diff_angle(upward, tilt), cross(upward, tilt)])  # Roll
-            # turn_list.pop()
-            # rotate_caterpillar(body, suit, turn_list)
             new_forward = norm(forward - proj(forward, core_to_head))
             if new_forward.equals(vector(0, 0, 0)):# Check if the approach to the planet is vertical
                 new_forward = norm(upward - proj(upward, core_to_head))
-            # turn_list.insert(0, [diff_angle(new_upward, new_forward), cross(new_forward, new_upward)])  # Pitch
-            # turn_list.pop()
-            # rotate_caterpillar(body, suit, turn_list)
             upward = norm(core_to_head)
             forward = new_forward
+            for dummy in range(5):
+                caterpillar_pos[dummy] = caterpillar_pos[0] - dummy*forward
+            for dummy in range(5):
+                turn_list[dummy] = [0, vector(0, 0, 0)]
             print('new forward, upward', forward, upward)
             head = make_head(caterpillar_pos, forward, upward)  # Make Caterpillar head
             body = make_body(caterpillar_pos, head, forward, upward)  # Make Caterpillar body
@@ -177,9 +174,9 @@ def main():
     for dummy in range(5):
         turn_list.append([0, vector(0, 0, 0)])
 
-    caterpillar_pos = []  # Initialize Caterpillar position. Head in origo
-    for dummy in range(5):
-        caterpillar_pos.append(vector(-dummy, 0, 0))
+    caterpillar_pos = [vector(0, 0, 0)]  # Initialize Caterpillar position. Head in origo
+    for dummy in range(1, 5):
+        caterpillar_pos.append(caterpillar_pos[0] - dummy*forward)
 
     head = make_head(caterpillar_pos, forward, upward)  # Make Caterpillar head
     body = make_body(caterpillar_pos, head, forward, upward)  # Make Caterpillar body
@@ -195,10 +192,12 @@ def main():
     on_planet = -1  # -1 represents when the caterpillar isn't on a planet
     while True:
         if on_planet == -1:  # -1 represents when the caterpillar isn't on a planet
-            forward, upward = space_direction(forward, upward)
+            forward, upward = space_direction(forward, upward)  # Move one step
             body, caterpillar_pos, forward, on_planet, upward, turn_list = is_planet_reached(
                 body, caterpillar_pos, forward, on_planet, planets, upward, suit, turn_list)
             if on_planet >= 0:
+                for segment in suit:
+                    segment.visible = False
                 if planets[on_planet].food[-1].visible:
                     for num, food in enumerate(planets[on_planet].food):
                         food.pos = foodscatter(planets, on_planet, num, body)
@@ -206,15 +205,12 @@ def main():
                     targetfood = 0
                 else:
                     targetfood = len(planets[on_planet].food)
-                for segment in suit:
-                    segment.visible = False
                 p_shift = True
         else:
             targetfood = foodcheck(planets, on_planet, body, targetfood)
-            # scoretext.text = str(score)
             # winsound.PlaySound(os.path.join(cwd, 'CaterpillarSounds', 'futz.wav'),
             #                    winsound.SND_FILENAME)
-            upward = norm(body[0].pos-planets[on_planet].pos)
+            upward = norm(caterpillar_pos[0] - planets[on_planet].pos)
             caterpillar_pos[0] += upward*(planets[on_planet].radius - mag(
                 caterpillar_pos[0] - planets[on_planet].pos)) + 0.75*upward
             forward, upward, p_shift = planet_direction(forward, upward, on_planet, planets)
@@ -230,10 +226,12 @@ def main():
             print('forward and upward is not perpendicular', forward, upward)
             return
         if p_shift:
+            v_forward = forward
+            v_upward = upward
             # Comment the text below out after a solution is found.
-            turn_list.insert(0, [diff_angle(v_forward, forward),
-                                 norm(cross(v_forward, forward))])
-            turn_list.pop()
+            # turn_list.insert(0, [diff_angle(v_forward, forward),
+            #                      norm(cross(v_forward, forward))])
+            # turn_list.pop()
             # Comment the text above out after a solution is found.
             p_shift = False
         else:
@@ -243,15 +241,15 @@ def main():
 
         v_forward = v_forward.rotate(turn_list[0][0], turn_list[0][1])
         v_upward = v_upward.rotate(turn_list[0][0], turn_list[0][1])
-        if mag(v_forward-forward) > 0.1:# or mag(v_upward-upward) > 0.1:
-            print("v_forward:", v_forward)
-            print("forward:", forward)
-            print("v_upward:", v_upward)
-            print("upward:", upward)
-            print("turning stats:", turn_list[0][0], turn_list[0][1])
-            print("turning error")
-            return
-
+        # if mag(v_forward-forward) > 0.1:# or mag(v_upward-upward) > 0.1:
+        #     print("v_forward:", v_forward)
+        #     print("forward:", forward)
+        #     print("v_upward:", v_upward)
+        #     print("upward:", upward)
+        #     print("turning stats:", turn_list[0][0], turn_list[0][1])
+        #     print("turning error")
+        #     return
+        print(turn_list[0:2])
         move_caterpillar(body, caterpillar_pos, forward, suit, turn_list)
         sleep(sleep_time)
 
