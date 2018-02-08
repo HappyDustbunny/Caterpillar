@@ -75,6 +75,7 @@ def is_planet_reached(body, caterpillar_pos, forward, on_planet, planets, upward
             print('new forward, upward', forward, upward)
             head = make_head(caterpillar_pos, forward, upward)  # Make Caterpillar head
             body = make_body(caterpillar_pos, head, forward, upward)  # Make Caterpillar body
+            scene.camera.follow(planets[on_planet])
     return body, caterpillar_pos, forward, on_planet, upward, turn_list
 
 def rotate_caterpillar(body, suit, turn_list):
@@ -100,7 +101,7 @@ def move_caterpillar(body, caterpillar_pos, forward, suit, turn_list):
         suit[num].pos = old_caterpillar_pos[num - 1]
         caterpillar_pos[num] = old_caterpillar_pos[num - 1]
     rotate_caterpillar(body, suit, turn_list)
-    scene.center = caterpillar_pos[0]
+    # scene.center = caterpillar_pos[0]
 
 
 def foodscatter(planets, on_planet, foodnum, body):
@@ -131,10 +132,12 @@ def foodorder(planets, on_planet):
         food.visible = True
 
 def foodcheck(planets, on_planet, body, targetfood):
-    """Checks if you're touching the food"""
+    """Checks your status compared to the food on the current planet"""
     global key_event
     collection_range = 1.5
-    if targetfood >= len(planets[on_planet].food):
+    if targetfood >= len(planets[on_planet].food) or targetfood == -1:
+        # targetfood being -1 represents returning to a planet 
+        # where you have already collected all the food
         print("All food collected on this planet.")
         key_event = "w"
     elif not planets[on_planet].food[targetfood].visible:
@@ -184,15 +187,19 @@ def main():
     suit = make_suit(caterpillar_pos, helmet, forward, upward)
     planets = make_planets(10)  # Makes planets
     make_food(planets)  # Distribute food on the planets
-    # score = 0
-
+    
+    score = 0
+    
     # cwd = os.getcwd()
 
+    scene.caption = "Score:" + str(score)
+    scene.camera.follow(body[0])
+
     sleep_time = 0.2  # Time between position update
-    on_planet = -1  # -1 represents when the caterpillar isn't on a planet
+    on_planet = -1  # on_planet being -1 represents when the caterpillar isn't on a planet
     while True:
-        if on_planet == -1:  # -1 represents when the caterpillar isn't on a planet
-            forward, upward = space_direction(forward, upward)  # Move one step
+        if on_planet == -1:  # on_planet being -1 represents when the caterpillar isn't on a planet
+            forward, upward = space_direction(forward, upward)
             body, caterpillar_pos, forward, on_planet, upward, turn_list = is_planet_reached(
                 body, caterpillar_pos, forward, on_planet, planets, upward, suit, turn_list)
             if on_planet >= 0:
@@ -204,7 +211,9 @@ def main():
                         food.axis = 2 * norm(food.pos - planets[on_planet].pos)
                     targetfood = 0
                 else:
-                    targetfood = len(planets[on_planet].food)
+                    targetfood = -1
+                for segment in suit:
+                    segment.visible = False
                 p_shift = True
         else:
             targetfood = foodcheck(planets, on_planet, body, targetfood)
@@ -214,9 +223,17 @@ def main():
             caterpillar_pos[0] += upward*(planets[on_planet].radius - mag(
                 caterpillar_pos[0] - planets[on_planet].pos)) + 0.75*upward
             forward, upward, p_shift = planet_direction(forward, upward, on_planet, planets)
+            scene.caption = "Score:" + str(score + targetfood)
             if p_shift:
-                if targetfood < len(planets[on_planet].food):
+                if targetfood >= len(planets[on_planet].food):
+                    score += targetfood
+                elif targetfood != -1:
+                    # targetfood being -1 represents having returned to a planet
+                    # where you have already collected all the food.
                     foodorder(planets, on_planet)
+                targetfood = 0
+                scene.camera.follow(body[0])
+                scene.caption = "Score:" + str(score)
                 on_planet = -1  # -1 represents when the caterpillar isn't on a planet
                 for segment in suit:
                     segment.visible = True

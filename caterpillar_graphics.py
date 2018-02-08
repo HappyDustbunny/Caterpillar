@@ -109,7 +109,9 @@ def make_food(planets):
     """ Distributes food on planets """
     for planet in planets:
         foods = []
-        number_of_food = 3
+        number_of_food = 2 + int((planet.radius-5)/(20/7))
+        if number_of_food > 8:
+            number_of_food = 8
         # for _ in range(int(5*random() + 5)): # makes 5-10 pellets
         #     food_pos = norm(vector(random() - 0.5, random() - 0.5,
         #                            random() - 0.5))*planet.radius + planet.pos
