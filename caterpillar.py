@@ -33,10 +33,10 @@ def space_direction(forward, upward):
     return forward, upward
 
 
-def planet_direction(forward, upward, on_planet, planets):
+def planet_direction(forward, upward, planets, target_food, score, on_planet, head, body, helmet,
+                     suit, caterpillar_pos, turn_list, v_forward, v_upward):
     """ Checking key_event value and update direction while on planet. """
     global key_event
-    p_shift = False
     if key_event == 'a':
         forward = -cross(forward, upward)
         forward = forward.rotate(1 / (planets[on_planet].radius + 0.75), -cross(forward, upward))
@@ -48,12 +48,34 @@ def planet_direction(forward, upward, on_planet, planets):
     if key_event == 'w':  # Leaving planet
         right = cross(forward, upward)
         forward, upward = upward, cross(right, upward)
-        p_shift = True
+        if target_food >= len(planets[on_planet].food):
+            score += target_food
+        elif target_food != -1:
+            # target_food being -1 represents having returned to a planet
+            # where you have already collected all the food.
+            foodorder(planets, on_planet)
+        target_food = 0
+        scene.caption = "Score:" + str(score)
+        on_planet = -1  # -1 represents when the caterpillar isn't on a planet
+        for segment in body:
+            segment.visible = False
+        for dummy in range(5):
+            caterpillar_pos[dummy] = caterpillar_pos[0] - dummy * forward
+        for dummy in range(5):
+            turn_list[dummy] = [0, vector(0, 0, 0)]
+        head = make_head(caterpillar_pos, forward, upward)  # Make Caterpillar head
+        body = make_body(caterpillar_pos, head, forward, upward)  # Make Caterpillar body
+        helmet = make_helmet(caterpillar_pos, forward, upward)
+        suit = make_suit(caterpillar_pos, helmet, forward, upward)
+        v_forward = forward
+        v_upward = upward
+        scene.camera.follow(body[0])
     key_event = ''
-    return forward, upward, p_shift
+    return forward, upward, target_food, score, on_planet, head, body, helmet, suit, caterpillar_pos,\
+           turn_list, v_forward, v_upward
 
 
-def is_planet_reached(body, caterpillar_pos, forward, on_planet, planets, upward, suit, turn_list):
+def is_planet_reached(body, caterpillar_pos, forward, on_planet, planets, upward, suit, turn_list, target_food):
     """ Checks if a planet is reached """
     for num1, planet in enumerate(planets):
         if mag(planet.pos - body[0].pos) <= planet.radius:  # Arriving at planet
@@ -76,7 +98,16 @@ def is_planet_reached(body, caterpillar_pos, forward, on_planet, planets, upward
             head = make_head(caterpillar_pos, forward, upward)  # Make Caterpillar head
             body = make_body(caterpillar_pos, head, forward, upward)  # Make Caterpillar body
             scene.camera.follow(planets[on_planet])
-    return body, caterpillar_pos, forward, on_planet, upward, turn_list
+            if planets[on_planet].food[-1].visible:
+                for num, food in enumerate(planets[on_planet].food):
+                    food.pos = foodscatter(planets, on_planet, num, body)
+                    food.axis = 2 * norm(food.pos - planets[on_planet].pos)
+                target_food = 0
+            else:
+                target_food = -1
+            for segment in suit:
+                segment.visible = False
+    return body, caterpillar_pos, forward, on_planet, upward, turn_list, target_food
 
 
 def rotate_caterpillar(body, suit, turn_list):
@@ -92,6 +123,8 @@ def rotate_caterpillar(body, suit, turn_list):
 
 def move_caterpillar(body, caterpillar_pos, forward, suit, turn_list):
     """ Moving the caterpillar"""
+    # winsound.PlaySound(os.path.join(cwd, 'CaterpillarSounds', 'futz.wav'),
+    #                    winsound.SND_FILENAME)
     old_caterpillar_pos = caterpillar_pos[:]
     caterpillar_pos[0] += forward
     body[0].pos = caterpillar_pos[0]
@@ -175,7 +208,6 @@ def main():
     v_forward = vector(1, 0, 0)
     v_upward = vector(0, 1, 0)
     turn_list = []
-    p_shift = False
     target_food = 0
 
     for dummy in range(5):
@@ -204,60 +236,22 @@ def main():
     while True:
         if on_planet == -1:  # on_planet being -1 represents when the caterpillar isn't on a planet
             forward, upward = space_direction(forward, upward)
-            body, caterpillar_pos, forward, on_planet, upward, turn_list = is_planet_reached(
-                body, caterpillar_pos, forward, on_planet, planets, upward, suit, turn_list)
-            if on_planet >= 0:
-                for segment in suit:
-                    segment.visible = False
-                if planets[on_planet].food[-1].visible:
-                    for num, food in enumerate(planets[on_planet].food):
-                        food.pos = foodscatter(planets, on_planet, num, body)
-                        food.axis = 2 * norm(food.pos - planets[on_planet].pos)
-                    target_food = 0
-                else:
-                    target_food = -1
-                for segment in suit:
-                    segment.visible = False
-                p_shift = True
+            body, caterpillar_pos, forward, on_planet, upward, turn_list, target_food = is_planet_reached(
+                body, caterpillar_pos, forward, on_planet, planets, upward, suit, turn_list, target_food)
         else:
             target_food = foodcheck(planets, on_planet, body, target_food)
-            # winsound.PlaySound(os.path.join(cwd, 'CaterpillarSounds', 'futz.wav'),
-            #                    winsound.SND_FILENAME)
             upward = norm(caterpillar_pos[0] - planets[on_planet].pos)
             caterpillar_pos[0] += upward * (planets[on_planet].radius - mag(
                 caterpillar_pos[0] - planets[on_planet].pos)) + 0.75 * upward
-            forward, upward, p_shift = planet_direction(forward, upward, on_planet, planets)
+            forward, upward, target_food, score, on_planet, head, body, helmet, suit, caterpillar_pos, \
+                turn_list, v_forward, v_upward = planet_direction(forward, upward, planets, target_food,\
+                score, on_planet, head, body, helmet, suit, caterpillar_pos, turn_list, v_forward, v_upward)
             scene.caption = "Score:" + str(score + target_food)
-            if p_shift:
-                if target_food >= len(planets[on_planet].food):
-                    score += target_food
-                elif target_food != -1:
-                    # target_food being -1 represents having returned to a planet
-                    # where you have already collected all the food.
-                    foodorder(planets, on_planet)
-                target_food = 0
-                scene.caption = "Score:" + str(score)
-                on_planet = -1  # -1 represents when the caterpillar isn't on a planet
-                for segment in body:
-                    segment.visible = False
-                for dummy in range(5):
-                    caterpillar_pos[dummy] = caterpillar_pos[0] - dummy * forward
-                for dummy in range(5):
-                    turn_list[dummy] = [0, vector(0, 0, 0)]
-                head = make_head(caterpillar_pos, forward, upward)  # Make Caterpillar head
-                body = make_body(caterpillar_pos, head, forward, upward)  # Make Caterpillar body
-                helmet = make_helmet(caterpillar_pos, forward, upward)
-                suit = make_suit(caterpillar_pos, helmet, forward, upward)
-                scene.camera.follow(body[0])
 
         if dot(forward, upward) > 0.1:
             print('forward and upward is not perpendicular', forward, upward)
             return
-        if p_shift:
-            v_forward = forward
-            v_upward = upward
-            p_shift = False
-        else:
+        if v_forward != forward:
             turn_list.insert(0, [diff_angle(v_forward, forward),
                                  norm(cross(v_forward, forward))])
             turn_list.pop()
