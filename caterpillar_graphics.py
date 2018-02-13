@@ -69,8 +69,8 @@ def make_suit(caterpillar_pos, helmet, forward, upward):
                            axis=forward, radius=0.25, color=color.black)
     right_jet_nozzle = cone(pos=caterpillar_pos[1] - 0.9*forward + 1.1*upward - 0.9*right,
                             axis=forward, radius=0.25, color=color.black)
-    back_pack_offset = box(pos=caterpillar_pos[1] + 0*forward - 1.3*upward + 0*right, axis=forward,
-                           up=upward, width=1.8, height=0.3, length=1, opacity=0.5)
+    back_pack_offset = box(pos=caterpillar_pos[1] + 0*forward - 1.4*upward + 0*right, axis=forward,
+                           up=upward, width=1.8, height=0.05, length=1, opacity=0)
     suit_segment = compound([body_sphere, left_foot, right_foot, back_pack,
                              left_jet, right_jet, left_jet_cap, right_jet_cap,
                              left_jet_nozzle, right_jet_nozzle,
