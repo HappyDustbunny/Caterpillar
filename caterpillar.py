@@ -218,24 +218,22 @@ def main():
     body = make_body(caterpillar_pos, head, forward, upward)  # Make Caterpillar body
     helmet = make_helmet(caterpillar_pos, forward, upward)  # Make space helmet
     suit = make_suit(caterpillar_pos, helmet, forward, upward)  # Make space suit
-    planets = make_planets(10)  # Makes planets
+    planets = make_planets(10)  # Make planets
     make_food(planets)  # Distribute food on the planets
 
-    score = 0
-
     # cwd = os.getcwd()
-
+    score = 0
     scene.caption = "Score:" + str(score)
     scene.camera.follow(body[0])
 
     sleep_time = 0.2  # Time between position update
     on_planet = -1  # on_planet being -1 represents when the caterpillar isn't on a planet
     while True:
-        if on_planet == -1:  # on_planet being -1 represents when the caterpillar isn't on a planet
+        if on_planet == -1:  # Off planet: on_planet being -1 represents when the caterpillar isn't on a planet
             forward, upward = space_direction(forward, upward)
             body, caterpillar_pos, forward, on_planet, upward, turn_list, target_food = is_planet_reached(
                 body, caterpillar_pos, forward, on_planet, planets, upward, suit, turn_list, target_food)
-        else:
+        else:  # On planet:
             target_food = foodcheck(planets, on_planet, body, target_food)
             upward = norm(caterpillar_pos[0] - planets[on_planet].pos)
             caterpillar_pos[0] += upward * (planets[on_planet].radius - mag(
@@ -249,8 +247,7 @@ def main():
             print('forward and upward is not perpendicular', forward, upward)
             return
         if v_forward != forward:
-            turn_list.insert(0, [diff_angle(v_forward, forward),
-                                 norm(cross(v_forward, forward))])
+            turn_list.insert(0, [diff_angle(v_forward, forward), norm(cross(v_forward, forward))])
             turn_list.pop()
 
         v_forward = v_forward.rotate(turn_list[0][0], turn_list[0][1])
