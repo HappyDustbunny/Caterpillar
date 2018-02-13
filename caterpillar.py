@@ -201,15 +201,12 @@ def main():
     scene.bind('keydown', direction)
 
     # global key_event  # Listening for key presses
-
-    forward = vector(1, 0, 0)
-    upward = vector(0, 1, 0)
-
-    v_forward = vector(1, 0, 0)
-    v_upward = vector(0, 1, 0)
-    turn_list = []
     target_food = 0
 
+    forward, upward = vector(1, 0, 0), vector(0, 1, 0)
+    v_forward, v_upward = vector(1, 0, 0), vector(0, 1, 0)
+
+    turn_list = []  # Initialize the list describing how each segment turns when the caterpillar moves
     for dummy in range(5):
         turn_list.append([0, vector(0, 0, 0)])
 

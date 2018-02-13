@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="7225687a-116a-439f-9fa2-8ec901dd182d" name="Default" comment="Possible">
+    <list default="true" id="7225687a-116a-439f-9fa2-8ec901dd182d" name="Default" comment="Made minor rearangement of variables initialization">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/caterpillar.py" afterPath="$PROJECT_DIR$/caterpillar.py" />
-      <change beforePath="$PROJECT_DIR$/caterpillar_graphics.py" afterPath="$PROJECT_DIR$/caterpillar_graphics.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -18,11 +17,10 @@
       <file leaf-file-name="caterpillar.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/caterpillar.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="646">
-              <caret line="59" column="28" lean-forward="true" selection-start-line="59" selection-start-column="28" selection-end-line="59" selection-end-column="28" />
+            <state relative-caret-position="287">
+              <caret line="203" column="19" lean-forward="true" selection-start-line="203" selection-start-column="19" selection-end-line="203" selection-end-column="19" />
               <folding>
                 <element signature="e#220#370#0" expanded="false" />
-                <element signature="e#415#830#0" expanded="false" />
                 <element signature="e#4866#5232#0" expanded="false" />
                 <element signature="e#6009#6526#0" expanded="false" />
                 <element signature="e#6568#7342#0" expanded="false" />
@@ -192,7 +190,14 @@
       <option name="project" value="LOCAL" />
       <updated>1518427044830</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Removed the variable keeping track of landing/leaving planet by moving code to more relevant places">
+      <created>1518515960516</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1518515960516</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TodoView">
@@ -257,7 +262,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Got landing on and leaving planets working. Mostly.&#10;Removed some outcommented code." />
-    <option name="LAST_COMMIT_MESSAGE" value="Got landing on and leaving planets working. Mostly.&#10;Removed some outcommented code." />
+    <MESSAGE value="Removed the variable keeping track of landing/leaving planet by moving code to more relevant places" />
+    <option name="LAST_COMMIT_MESSAGE" value="Removed the variable keeping track of landing/leaving planet by moving code to more relevant places" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -272,7 +278,6 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#220#370#0" expanded="false" />
-            <element signature="e#415#830#0" expanded="false" />
             <element signature="e#4866#5232#0" expanded="false" />
             <element signature="e#6009#6526#0" expanded="false" />
             <element signature="e#6568#7342#0" expanded="false" />
@@ -295,7 +300,6 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#220#370#0" expanded="false" />
-            <element signature="e#415#830#0" expanded="false" />
             <element signature="e#4866#5232#0" expanded="false" />
             <element signature="e#6009#6526#0" expanded="false" />
             <element signature="e#6568#7342#0" expanded="false" />
@@ -318,7 +322,6 @@
           <caret line="104" column="72" lean-forward="false" selection-start-line="104" selection-start-column="72" selection-end-line="104" selection-end-column="72" />
           <folding>
             <element signature="e#220#370#0" expanded="false" />
-            <element signature="e#415#830#0" expanded="false" />
             <element signature="e#4866#5232#0" expanded="false" />
             <element signature="e#6009#6526#0" expanded="false" />
             <element signature="e#6568#7342#0" expanded="false" />
@@ -341,7 +344,6 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#220#370#0" expanded="false" />
-            <element signature="e#415#830#0" expanded="false" />
             <element signature="e#4866#5232#0" expanded="false" />
             <element signature="e#6009#6526#0" expanded="false" />
             <element signature="e#6568#7342#0" expanded="false" />
@@ -364,7 +366,6 @@
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#220#370#0" expanded="false" />
-            <element signature="e#415#830#0" expanded="false" />
             <element signature="e#4866#5232#0" expanded="false" />
             <element signature="e#6009#6526#0" expanded="false" />
             <element signature="e#6568#7342#0" expanded="false" />
@@ -391,11 +392,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/caterpillar.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="646">
-          <caret line="59" column="28" lean-forward="true" selection-start-line="59" selection-start-column="28" selection-end-line="59" selection-end-column="28" />
+        <state relative-caret-position="287">
+          <caret line="203" column="19" lean-forward="true" selection-start-line="203" selection-start-column="19" selection-end-line="203" selection-end-column="19" />
           <folding>
             <element signature="e#220#370#0" expanded="false" />
-            <element signature="e#415#830#0" expanded="false" />
             <element signature="e#4866#5232#0" expanded="false" />
             <element signature="e#6009#6526#0" expanded="false" />
             <element signature="e#6568#7342#0" expanded="false" />
