@@ -4,11 +4,11 @@ from vpython import *
 from random import random, shuffle
 
 
-def make_head(caterpillar_pos, forward, upward):
-    """ Make caterpillar head """
+def make_body(caterpillar_pos, forward, upward):
+    """ Make caterpillar body """
     right = cross(forward, upward)
-    head_ball = sphere(pos=caterpillar_pos[0], color=color.orange)
-    left_eye = sphere(pos=caterpillar_pos[0] + 0.5*forward + 0.5*upward - 
+    head_ball = sphere(pos=caterpillar_pos[0], color=color.orange)  # Make head
+    left_eye = sphere(pos=caterpillar_pos[0] + 0.5*forward + 0.5*upward -
                       0.4*right, radius=0.35)
     right_eye = sphere(pos=caterpillar_pos[0] + 0.5*forward + 0.5*upward +
                        0.4*right, radius=0.35)
@@ -17,22 +17,8 @@ def make_head(caterpillar_pos, forward, upward):
     right_pupil = sphere(pos=caterpillar_pos[0] + 0.6*forward + 0.56*upward
                          + 0.42*right, radius=0.25, color=color.black)
     head = compound([head_ball, left_eye, right_eye, left_pupil, right_pupil])
-    return head
-
-
-def make_helmet(caterpillar_pos, forward, upward):
-    """ Make caterpillar helmet """
-    right = cross(forward, upward)
-    helmet = sphere(pos=caterpillar_pos[0] + 0.1*forward + 0.15*upward - 
-                    0*right, radius=1.2, opacity=0.3)
-    return helmet
-
-
-def make_body(caterpillar_pos, head, forward, upward):
-    """ Make caterpillar body """
     body = [head]
-    right = cross(forward, upward)
-    for increment in range(1, 5):
+    for increment in range(1, 5):   # Make body segments
         body_sphere = sphere(pos=caterpillar_pos[increment], color=color.blue)
         left_foot = sphere(pos=caterpillar_pos[increment] + 0*forward -
                            0.6*upward - 0.5*right, radius=0.3, color=color.orange)
@@ -43,12 +29,13 @@ def make_body(caterpillar_pos, head, forward, upward):
     return body
 
 
-def make_suit(caterpillar_pos, helmet, forward, upward):
+def make_suit(caterpillar_pos, forward, upward):
     """ Make caterpillar suit """
-    suit = [helmet]
     right = cross(forward, upward)
-    body_sphere = sphere(pos=caterpillar_pos[1], radius=1.1,
-                         color=color.white)
+    helmet = sphere(pos=caterpillar_pos[0] + 0.1*forward + 0.15*upward -
+                    0*right, radius=1.2, opacity=0.3)
+    suit = [helmet]
+    body_sphere = sphere(pos=caterpillar_pos[1], radius=1.1, color=color.white)  # Make first segment with jetpack
     left_foot = sphere(pos=caterpillar_pos[1] + 0*forward -
                        0.6*upward - 0.5*right, radius=0.4, color=color.black)
     right_foot = sphere(pos=caterpillar_pos[1] +  0*forward -
@@ -76,7 +63,7 @@ def make_suit(caterpillar_pos, helmet, forward, upward):
                              left_jet_nozzle, right_jet_nozzle,
                              back_pack_decal, back_pack_offset])
     suit.append(suit_segment)
-    for increment in range(2, 5):
+    for increment in range(2, 5):  # Make the rest of the suit segments
         body_sphere = sphere(pos=caterpillar_pos[increment], radius=1.1,
                              color=color.white)
         left_foot = sphere(pos=caterpillar_pos[increment] + 0*forward -
