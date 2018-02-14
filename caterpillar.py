@@ -17,10 +17,12 @@ class Caterpillar:
         self.pos = pos
         self.forward = forward
         self.upward = upward
-        self.right = cross(forward, upward)
         self.last_forward = forward
         self.last_upward = upward
         self.turn_list = turn_list
+
+    def right(self):
+        return norm(cross(self.forward, self.upward))
 
     def angle(self):
         angle = diff_angle(self.last_upward, self.upward)
@@ -42,9 +44,9 @@ def space_direction(cat):
     """ Checking key_event value and update direction if key_event is not empty """
     global key_event
     if key_event == 'a':
-        cat.forward = -cat.right
+        cat.forward = -cat.right()
     if key_event == 'd':
-        cat.forward = cat.right
+        cat.forward = cat.right()
     if key_event == 'w':
         cat.forward, cat.upward = cat.upward, -cat.forward
     if key_event == 's':
@@ -57,15 +59,15 @@ def planet_direction(cat, body, suit, planets, target_food, score, on_planet):
     """ Checking key_event value and update direction while on planet. """
     global key_event
     if key_event == 'a':
-        cat.forward = -cat.right
-        cat.forward = cat.forward.rotate(1 / (planets[on_planet].radius + 0.75), -cat.right)
+        cat.forward = -cat.right()
+        cat.forward = cat.forward.rotate(1 / (planets[on_planet].radius + 0.75), -cat.right())
     if key_event == 'd':
-        cat.forward = cat.right
-        cat.forward = cat.forward.rotate(1 / (planets[on_planet].radius + 0.75), -cat.right)
-    if key_event == '':
-        cat.forward = cat.forward.rotate(1 / (planets[on_planet].radius + 0.75), -cat.right)
+        cat.forward = cat.right()
+        cat.forward = cat.forward.rotate(1 / (planets[on_planet].radius + 0.75), -cat.right())
+    if key_event == 's':
+        cat.forward = cat.forward.rotate(1 / (planets[on_planet].radius + 0.75), -cat.right())
     if key_event == 'w':  # Leaving planet
-        cat.forward, cat.upward = cat.upward, cat.right
+        cat.forward, cat.upward = cat.upward, cat.right()
         if target_food >= len(planets[on_planet].food):
             score += target_food
         elif target_food != -1:
