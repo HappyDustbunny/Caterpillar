@@ -64,10 +64,10 @@ def planet_direction(cat, body, suit, planets, target_food, score, on_planet):
     if key_event == 'd':
         cat.forward = cat.right()
         cat.forward = cat.forward.rotate(1 / (planets[on_planet].radius + 0.75), -cat.right())
-    if key_event == '':
+    if key_event == 's':
         cat.forward = cat.forward.rotate(1 / (planets[on_planet].radius + 0.75), -cat.right())
     if key_event == 'w':  # Leaving planet
-        cat.forward, cat.upward = cat.upward, cat.forward
+        cat.forward, cat.upward = cat.upward, -norm(cat.forward)
         if target_food >= len(planets[on_planet].food):
             score += target_food
         elif target_food != -1:
