@@ -11,7 +11,7 @@ from caterpillar_graphics import *
 key_event = ''
 
 
-class Caterpillar:
+class CaterpillarClass:
     """ Store position data and local coordinate system """
     def __init__(self, pos, forward, upward, turn_list):
         self.pos = pos
@@ -204,6 +204,63 @@ def foodcheck(planets, on_planet, body, targetfood):
     return targetfood
 
 
+def main():
+    """ Main loop """
+    scene.bind('keydown', direction)
+
+    target_food = 0
+    forward, upward = vector(1, 0, 0), vector(0, 1, 0)
+    caterpillar_pos = [vector(0, 0, 0)]  # Initialize Caterpillar head position. Head in origo
+    for dummy in range(1, 5):  # Initialize body segment positions
+        caterpillar_pos.append(caterpillar_pos[0] - dummy * forward)
+    turn_list = []  # Initialize the list describing how each segment turns when the caterpillar moves
+    for dummy in range(5):
+        turn_list.append([0, vector(0, 0, 0)])
+
+    cat = CaterpillarClass(caterpillar_pos, forward, upward, turn_list)
+
+    body = make_body(cat.pos, cat.forward, cat.upward)  # Make caterpillar body
+    suit = make_suit(cat.pos, cat.forward, cat.upward)  # Make space suit
+    planets = make_planets(10)  # Make planets
+    make_food(planets)  # Distribute food on the planets
+
+    # cwd = os.getcwd()
+    score = 0
+    scene.caption = "Score:" + str(score)
+    scene.camera.follow(body[0])
+
+    sleep_time = 0.2  # Time between position update
+    on_planet = -1  # on_planet being -1 represents when the caterpillar isn't on a planet
+    while True:
+        if on_planet == -1:  # Off planet: on_planet being -1 represents when the caterpillar isn't on a planet
+            cat = space_direction(cat)
+            # cat.forward, cat.upward = space_direction(cat.forward, cat.upward)
+            cat, body, on_planet, target_food = is_planet_reached(cat, body, suit, planets, on_planet, target_food)
+        else:  # On planet:
+            target_food = foodcheck(planets, on_planet, body, target_food)
+            cat.upward = norm(cat.pos[0] - planets[on_planet].pos)
+            cat.pos[0] += cat.upward * (planets[on_planet].radius - mag(cat.pos[0] - planets[on_planet].pos)) + 0.75 * cat.upward
+            cat, body, suit, target_food, score, on_planet = planet_direction(cat, body, suit, planets, target_food,\
+                score, on_planet)
+            scene.caption = "Score:" + str(score + target_food)
+
+        if not cat.last_forward.equals(cat.forward):
+            cat.turn_list.insert(0, [diff_angle(cat.last_forward, cat.forward),
+                                     norm(cross(cat.last_forward, cat.forward))])
+            cat.turn_list.pop()
+
+        cat.last_forward = cat.last_forward.rotate(cat.turn_list[0][0], cat.turn_list[0][1])
+        cat.last_upward = cat.last_upward.rotate(cat.turn_list[0][0], cat.turn_list[0][1])
+        move_caterpillar(cat, body, suit)
+        sleep(sleep_time)
+
+    # cat.upward = vector(0, 0, 1)
+    # print(cat.upward, cat.last_upward, cat.angle())
+    # body[2].up = cat.upward
+
+
+main()
+
 # def main():
 #     """ Main loop """
 #     scene.bind('keydown', direction)
@@ -261,61 +318,3 @@ def foodcheck(planets, on_planet, body, targetfood):
 #         v_upward = v_upward.rotate(turn_list[0][0], turn_list[0][1])
 #         move_caterpillar(body, caterpillar_pos, forward, suit, turn_list)
 #         sleep(sleep_time)
-
-def main():
-    """ Main loop """
-    scene.bind('keydown', direction)
-
-    target_food = 0
-    forward, upward = vector(1, 0, 0), vector(0, 1, 0)
-    caterpillar_pos = [vector(0, 0, 0)]  # Initialize Caterpillar head position. Head in origo
-    for dummy in range(1, 5):  # Initialize body segment positions
-        caterpillar_pos.append(caterpillar_pos[0] - dummy * forward)
-    turn_list = []  # Initialize the list describing how each segment turns when the caterpillar moves
-    for dummy in range(5):
-        turn_list.append([0, vector(0, 0, 0)])
-
-    cat = Caterpillar(caterpillar_pos, forward, upward, turn_list)
-
-    body = make_body(cat.pos, cat.forward, cat.upward)  # Make caterpillar body
-    suit = make_suit(cat.pos, cat.forward, cat.upward)  # Make space suit
-    planets = make_planets(10)  # Make planets
-    make_food(planets)  # Distribute food on the planets
-
-    # cwd = os.getcwd()
-    score = 0
-    scene.caption = "Score:" + str(score)
-    scene.camera.follow(body[0])
-
-    sleep_time = 0.2  # Time between position update
-    on_planet = -1  # on_planet being -1 represents when the caterpillar isn't on a planet
-    while True:
-        if on_planet == -1:  # Off planet: on_planet being -1 represents when the caterpillar isn't on a planet
-            cat = space_direction(cat)
-            # cat.forward, cat.upward = space_direction(cat.forward, cat.upward)
-            cat, body, on_planet, target_food = is_planet_reached(cat, body, suit, planets, on_planet, target_food)
-        else:  # On planet:
-            target_food = foodcheck(planets, on_planet, body, target_food)
-            cat.upward = norm(cat.pos[0] - planets[on_planet].pos)
-            cat.pos[0] += cat.upward * (planets[on_planet].radius - mag(cat.pos[0] - planets[on_planet].pos)) + 0.75 * cat.upward
-            cat, body, suit, target_food, score, on_planet = planet_direction(cat, body, suit, planets, target_food,\
-                score, on_planet)
-            scene.caption = "Score:" + str(score + target_food)
-
-        if not cat.last_forward.equals(cat.forward):
-            cat.turn_list.insert(0, [diff_angle(cat.last_forward, cat.forward),
-                                     norm(cross(cat.last_forward, cat.forward))])
-            cat.turn_list.pop()
-
-
-        cat.last_forward = cat.last_forward.rotate(cat.turn_list[0][0], cat.turn_list[0][1])
-        cat.last_upward = cat.last_upward.rotate(cat.turn_list[0][0], cat.turn_list[0][1])
-        move_caterpillar(cat, body, suit)
-        sleep(sleep_time)
-
-    # cat.upward = vector(0, 0, 1)
-    # print(cat.upward, cat.last_upward, cat.angle())
-    # body[2].up = cat.upward
-
-
-main()
