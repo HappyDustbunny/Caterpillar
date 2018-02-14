@@ -24,6 +24,9 @@ class CaterpillarClass:
     def right(self):
         return norm(cross(self.forward, self.upward))
 
+    def right(self):
+        return norm(cross(self.forward, self.upward))
+
     def angle(self):
         angle = diff_angle(self.last_upward, self.upward)
         return angle
@@ -67,7 +70,7 @@ def planet_direction(cat, body, suit, planets, target_food, score, on_planet):
     if key_event == 's':
         cat.forward = cat.forward.rotate(1 / (planets[on_planet].radius + 0.75), -cat.right())
     if key_event == 'w':  # Leaving planet
-        cat.forward, cat.upward = cat.upward, -norm(cat.forward)
+        cat.forward, cat.upward = cat.upward, cat.right()
         if target_food >= len(planets[on_planet].food):
             score += target_food
         elif target_food != -1:
