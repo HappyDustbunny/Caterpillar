@@ -10,7 +10,7 @@ from caterpillar_graphics import *
 key_event = ''
 
 
-class Caterpillar:
+class CaterpillarClass:
     """ Store position data and local coordinate system """
     def __init__(self, pos, forward, upward, turn_list):
         self.pos = pos
@@ -220,7 +220,7 @@ def main():
         caterpillar_pos.append(caterpillar_pos[0] - dummy * forward)
         turn_list.append([0, vector(0, 0, 0)])
 
-    cat = Caterpillar(caterpillar_pos, forward, upward, turn_list)
+    cat = CaterpillarClass(caterpillar_pos, forward, upward, turn_list)
 
     body = make_body(cat.pos, cat.forward, cat.upward)  # Make caterpillar body
     suit = make_suit(cat.pos, cat.forward, cat.upward)  # Make space suit
