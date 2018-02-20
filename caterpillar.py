@@ -7,6 +7,7 @@
 # from random import random, shuffle
 from caterpillar_graphics import *
 
+PI = 3.1415926536
 key_event = ''
 
 
@@ -47,12 +48,16 @@ def space_direction(cat):
     global key_event
     if key_event == 'a':
         cat.forward = -cat.right()
+        cat.turn_list[0] = [PI/2, cat.upward]
     if key_event == 'd':
         cat.forward = cat.right()
+        cat.turn_list[0] = [-PI/2, cat.upward]
     if key_event == 'w':
         cat.forward, cat.upward = cat.upward, -cat.forward
+        cat.turn_list[0] = [PI/2, cat.right()]
     if key_event == 's':
         cat.forward, cat.upward = -cat.upward, cat.forward
+        cat.turn_list[0] = [-PI/2, cat.right()]
     key_event = ''
     return cat
 
@@ -60,11 +65,16 @@ def space_direction(cat):
 def planet_direction(cat, body, suit, planets, target_food, score, on_planet):
     """ Checking key_event value and update direction while on planet. """
     global key_event
-    cat.forward = cat.forward.rotate(1 / (planets[on_planet].radius + 0.75), -cat.right())
     if key_event == 'a':
         cat.forward = -cat.right()
+        cat.turn_list[0] = [PI/2, cat.upward]
+        # cat.turn_list.insert(0, [-PI/2, cat.upward])
+        # cat.turn_list.pop()
     if key_event == 'd':
         cat.forward = cat.right()
+        cat.turn_list[0] = [-PI/2, cat.upward]
+        # cat.turn_list.insert(0, [PI/2, cat.upward])
+        # cat.turn_list.pop()
     if key_event == 'w':  # Leaving planet
         cat.forward, cat.upward = cat.upward, -cat.forward
         if target_food >= len(planets[on_planet].food):
@@ -242,16 +252,11 @@ def main():
             cat, body, suit, target_food, score, on_planet = planet_direction(cat, body, suit, planets, target_food,\
                 score, on_planet)
             scene.caption = "Score:" + str(score + target_food)
-
-        if mag(cat.last_forward - cat.forward) > 0.2:
-        # if not cat.last_forward.equals(cat.forward):
-            cat.turn_list.insert(0, [diff_angle(cat.last_forward, cat.forward),
-                                     norm(cross(cat.last_forward, cat.forward))])
-            cat.turn_list.pop()
-            cat.last_forward = cat.forward
-        else:
-            cat.last_forward = cat.last_forward.rotate(cat.turn_list[0][0], cat.turn_list[0][1])
-            cat.last_upward = cat.last_upward.rotate(cat.turn_list[0][0], cat.turn_list[0][1])
+            cat.forward = cat.forward.rotate(1 / (planets[on_planet].radius + 0.75), -cat.right())
+            for segment in body:
+                segment.rotate(1 / (planets[on_planet].radius + 0.75), -cat.right())
+# TODO Ovenstående løkke skal integreres in move_caterpillar. Her virker den kun hvis retningen ikke ændres.
+# TODO Måske skal kroppen jævnligt nulstilles ligesom ved planetfall?
 
         move_caterpillar(cat, body, suit)
         sleep(sleep_time)
