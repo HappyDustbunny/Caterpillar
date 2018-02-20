@@ -239,7 +239,7 @@ def main():
 
     scene.camera.follow(body[0])
 
-    sleep_time = 0.2  # Time between position update
+    sleep_time = 0.2  # Time between position updates
     on_planet = -1  # on_planet being -1 represents when the caterpillar isn't on a planet
     while True:
         if on_planet == -1:  # Off planet: on_planet being -1 represents when the caterpillar isn't on a planet
