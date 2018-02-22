@@ -13,11 +13,17 @@ key_event = ''
 
 class CaterpillarClass:
     """ Store position data and local coordinate system """
-    def __init__(self, pos, forward, upward, turn_list):
-        self.pos = pos
+    def __init__(self, forward, upward):
+        caterpillar_pos = [vector(0, 0, 0)]  # Initialize Caterpillar head position. Head in origo
+        turn_list = [[0, vector(0, 0, 0)]]  # Initialize a list describing how each segment turns
+        # when the caterpillar moves
+        for dummy in range(1, 5):  # Initialize body segment positions
+            caterpillar_pos.append(caterpillar_pos[0] - dummy * forward)
+            turn_list.append([0, vector(0, 0, 0)])
+        self.pos = caterpillar_pos
         self.forward = forward
         self.upward = upward
-        self.last_pos = pos
+        self.last_pos = caterpillar_pos
         self.last_forward = forward
         self.last_upward = upward
         self.turn_list = turn_list
@@ -138,7 +144,7 @@ def move_caterpillar(cat, body, suit):
     """ Move the caterpillar one step"""
     # winsound.PlaySound(os.path.join(cwd, 'CaterpillarSounds', 'futz.wav'),
     #                    winsound.SND_FILENAME)
-    old_caterpillar_pos = cat.pos[:]
+    old_pos = cat.pos[:]
     cat.pos[0] += cat.forward
 
     body[0].pos = cat.pos[0]
@@ -149,9 +155,9 @@ def move_caterpillar(cat, body, suit):
     for num, segment in enumerate(body):
         if num == 0:
             continue
-        segment.pos = old_caterpillar_pos[num - 1]
-        suit[num].pos = old_caterpillar_pos[num - 1]
-        cat.pos[num] = old_caterpillar_pos[num - 1]
+        segment.pos = old_pos[num - 1]
+        suit[num].pos = old_pos[num - 1]
+        cat.pos[num] = old_pos[num - 1]
 
         segment.rotate(cat.turn_list[num][0], cat.turn_list[num][1])
         suit[num].rotate(cat.turn_list[num][0], cat.turn_list[num][1])
@@ -224,13 +230,7 @@ def main():
     target_food, score = 0, 0
     scene.caption = "Score:" + str(score)
     forward, upward = vector(1, 0, 0), vector(0, 1, 0)
-    caterpillar_pos = [vector(0, 0, 0)]  # Initialize Caterpillar head position. Head in origo
-    turn_list = [[0, vector(0, 0, 0)]]  # Initialize a list describing how each segment turns when the caterpillar moves
-    for dummy in range(1, 5):  # Initialize body segment positions
-        caterpillar_pos.append(caterpillar_pos[0] - dummy * forward)
-        turn_list.append([0, vector(0, 0, 0)])
-
-    cat = CaterpillarClass(caterpillar_pos, forward, upward, turn_list)
+    cat = CaterpillarClass( forward, upward)
 
     body = make_body(cat.pos, cat.forward, cat.upward)  # Make caterpillar body
     suit = make_suit(cat.pos, cat.forward, cat.upward)  # Make space suit
@@ -248,9 +248,10 @@ def main():
         else:  # On planet:
             target_food = foodcheck(planets, on_planet, body, target_food)
             cat.upward = norm(cat.pos[0] - planets[on_planet].pos)
-            cat.pos[0] += cat.upward * (planets[on_planet].radius - mag(cat.pos[0] - planets[on_planet].pos)) + 0.75 * cat.upward
-            cat, body, suit, target_food, score, on_planet = planet_direction(cat, body, suit, planets, target_food,\
-                score, on_planet)
+            cat.pos[0] += cat.upward * (planets[on_planet].radius -
+                                        mag(cat.pos[0] - planets[on_planet].pos)) + 0.75 * cat.upward
+            cat, body, suit, target_food, score, on_planet =\
+                planet_direction(cat, body, suit, planets, target_food, score, on_planet)
             scene.caption = "Score:" + str(score + target_food)
             cat.forward = cat.forward.rotate(1 / (planets[on_planet].radius + 0.75), -cat.right())
             for segment in body:
