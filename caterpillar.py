@@ -1,11 +1,11 @@
 """ Snake clone """
 
 # from math import acos
-# import vpython
+from vpython import *
 # import winsound
 # import os
-# from random import random, shuffle
-from caterpillar_graphics import *
+from random import random, shuffle
+from caterpillar_graphics import make_body, make_suit, make_food, make_planets
 
 PI = 3.1415926536
 key_event = ''
@@ -134,7 +134,7 @@ def is_planet_reached(cat, body, suit, planets, on_planet, target_food):
     return cat, body, on_planet, target_food
 
 
-def move_caterpillar(cat, body, suit):
+def move_caterpillar(cat, body, suit, on_planet, planets):
     """ Move the caterpillar one step"""
     # winsound.PlaySound(os.path.join(cwd, 'CaterpillarSounds', 'futz.wav'),
     #                    winsound.SND_FILENAME)
@@ -146,6 +146,8 @@ def move_caterpillar(cat, body, suit):
 
     body[0].rotate(cat.turn_list[0][0], cat.turn_list[0][1])
     suit[0].rotate(cat.turn_list[0][0], cat.turn_list[0][1])
+    if on_planet != -1:
+        body[0].rotate(1 / (planets[on_planet].radius + 0.75), -cat.right())
     for num, segment in enumerate(body):
         if num == 0:
             continue
@@ -155,6 +157,8 @@ def move_caterpillar(cat, body, suit):
 
         segment.rotate(cat.turn_list[num][0], cat.turn_list[num][1])
         suit[num].rotate(cat.turn_list[num][0], cat.turn_list[num][1])
+        if on_planet != -1:
+            segment.rotate(1 / (planets[on_planet].radius + 0.75), -cat.right())
     cat.turn_list.insert(0, [0, vector(0, 0, 0)])
     cat.turn_list.pop()
 
@@ -239,7 +243,7 @@ def main():
 
     scene.camera.follow(body[0])
 
-    sleep_time = 0.2  # Time between position updates
+    sleep_time = 1.2  # Time between position updates
     on_planet = -1  # on_planet being -1 represents when the caterpillar isn't on a planet
     while True:
         if on_planet == -1:  # Off planet: on_planet being -1 represents when the caterpillar isn't on a planet
@@ -248,17 +252,19 @@ def main():
         else:  # On planet:
             target_food = foodcheck(planets, on_planet, body, target_food)
             cat.upward = norm(cat.pos[0] - planets[on_planet].pos)
-            cat.pos[0] += cat.upward * (planets[on_planet].radius - mag(cat.pos[0] - planets[on_planet].pos)) + 0.75 * cat.upward
-            cat, body, suit, target_food, score, on_planet = planet_direction(cat, body, suit, planets, target_food,\
-                score, on_planet)
+            cat.pos[0] += cat.upward * (planets[on_planet].radius - mag(cat.pos[0] -
+                                                                        planets[on_planet].pos)) + 0.75 * cat.upward
+            cat, body, suit, target_food, score, on_planet = planet_direction(cat,
+                                                                              body, suit, planets,
+                                                                              target_food, score, on_planet)
             scene.caption = "Score:" + str(score + target_food)
             cat.forward = cat.forward.rotate(1 / (planets[on_planet].radius + 0.75), -cat.right())
-            for segment in body:
-                segment.rotate(1 / (planets[on_planet].radius + 0.75), -cat.right())
+            # for segment in body:
+            #     segment.rotate(1 / (planets[on_planet].radius + 0.75), -cat.right())
 # TODO Ovenstående løkke skal integreres in move_caterpillar. Her virker den kun hvis retningen ikke ændres.
 # TODO Måske skal kroppen jævnligt nulstilles ligesom ved planetfall?
 
-        move_caterpillar(cat, body, suit)
+        move_caterpillar(cat, body, suit, on_planet, planets)
         sleep(sleep_time)
 
 
