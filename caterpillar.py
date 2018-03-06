@@ -26,14 +26,28 @@ class CaterpillarClass:
         """ Returns last vector in local coordinate system (forward, upward, right)"""
         value = norm(cross(self.forward, self.upward))
         return value
+    #
+    # def angle(self):
+    #     angle = diff_angle(self.last_upward, self.upward)
+    #     return angle
+    #
+    # def update_pos(self, new_pos):
+    #     self.last_pos = self.pos
+    #     self.pos = new_pos
 
-    def angle(self):
-        angle = diff_angle(self.last_upward, self.upward)
-        return angle
 
-    def update_pos(self, new_pos):
-        self.last_pos = self.pos
-        self.pos = new_pos
+class SegmentsClass:
+    """Each segment is an instance of the SegmentClass"""
+
+    def __init__(self, pos, turn_axis, turn_angle, next_segment, last_segment):
+        self.pos = pos
+        self.turn_axis = turn_axis
+        self.turn_angle = turn_angle
+        self.next_segment = next_segment
+        self.last_segment = last_segment
+
+    def move_turn(self):
+        pass
 
 
 def direction(event):
@@ -88,15 +102,14 @@ def planet_direction(cat, body, suit, planets, target_food, score, on_planet):
         on_planet = -1  # -1 represents when the caterpillar isn't on a planet
         for segment in body:
             segment.visible = False
-        for dummy in range(5):
-            cat.pos[dummy] = cat.pos[0] - dummy * cat.forward
-            cat.turn_list[dummy] = [0, vector(0, 0, 0)]
+        for num in range(5):
+            cat.pos[num] = cat.pos[0] - num * cat.forward
+            cat.turn_list[num] = [0, vector(0, 0, 0)]
         body = make_body(cat.pos, cat.forward, cat.upward)  # Make Caterpillar body
         suit = make_suit(cat.pos, cat.forward, cat.upward)
         cat.last_forward = cat.forward
         cat.last_upward = cat.upward
         scene.camera.follow(body[0])
-
     key_event = ''
     return cat, body, suit, target_food, score, on_planet
 
@@ -117,9 +130,9 @@ def is_planet_reached(cat, body, suit, planets, on_planet, target_food):
             if cat.forward.equals(vector(0, 0, 0)):  # Check if the approach to the planet is vertical
                 cat.forward = norm(cat.upward - proj(cat.upward, core_to_head))
             cat.upward = norm(core_to_head)
-            for dummy in range(5):
-                cat.pos[dummy] = cat.pos[0] - dummy * cat.forward
-                cat.turn_list[dummy] = [0, vector(0, 0, 0)]
+            for num in range(5):
+                cat.pos[num] = cat.pos[0] - num * cat.forward
+                cat.turn_list[num] = [0, vector(0, 0, 0)]
             body = make_body(cat.pos, cat.forward, cat.upward)  # Make Caterpillar body
             scene.camera.follow(planets[on_planet])
             if planets[on_planet].food[-1].visible:
@@ -227,11 +240,12 @@ def main():
     # cwd = os.getcwd()
     target_food, score = 0, 0
     scene.caption = "Score:" + str(score)
+
     forward, upward = vector(1, 0, 0), vector(0, 1, 0)
     caterpillar_pos = [vector(0, 0, 0)]  # Initialize Caterpillar head position. Head in origo
     turn_list = [[0, vector(0, 0, 0)]]  # Initialize a list describing how each segment turns when the caterpillar moves
-    for dummy in range(1, 5):  # Initialize body segment positions
-        caterpillar_pos.append(caterpillar_pos[0] - dummy * forward)
+    for num in range(1, 5):  # Initialize body segment positions
+        caterpillar_pos.append(caterpillar_pos[0] - num * forward)
         turn_list.append([0, vector(0, 0, 0)])
 
     cat = CaterpillarClass(caterpillar_pos, forward, upward, turn_list)
