@@ -36,20 +36,6 @@ class CaterpillarClass:
     #     self.pos = new_pos
 
 
-class SegmentsClass:
-    """Each segment is an instance of the SegmentClass"""
-
-    def __init__(self, pos, turn_axis, turn_angle, next_segment, last_segment):
-        self.pos = pos
-        self.turn_axis = turn_axis
-        self.turn_angle = turn_angle
-        self.next_segment = next_segment
-        self.last_segment = last_segment
-
-    def move_turn(self):
-        pass
-
-
 def direction(event):
     """ Capture keyboard interrupt and choose new direction and new orientation """
     # value = event.key
