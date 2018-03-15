@@ -17,10 +17,12 @@ def direction(event):
 class SegmentsClass:
     """Each segment of the caterpillar is an instance of the SegmentClass"""
 
-    def __init__(self, position, next_segment, last_segment):
-        self.segment = sphere(pos=position, radius=1, color=color.blue)
-        self.next_segment = next_segment
-        self.last_segment = last_segment
+    def __init__(self, position):
+        bodyorb = sphere(pos=position, radius=1, color=color.blue)
+        bodyrod = cylinder(pos=position+vector(0, 0, 1.1), radius=0.2, axis=vector(0, 0, -2.2))
+        self.segment = compound([bodyorb, bodyrod])
+        self.next_segment = None
+        self.last_segment = None
         self.last_turn_axis = vector(0, 1, 0)
         self.last_turn_angle = 0
 
@@ -32,6 +34,8 @@ class SegmentsClass:
         self.segment.rotate(turn_angle, turn_axis)
         if self.next_segment is not None:
             self.next_segment.move_turn_space(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
+        self.last_turn_angle = turn_angle
+        self.last_turn_axis = turn_axis
         self.segment.pos = moveto
 
     def move_turn_planet(self):
@@ -40,7 +44,7 @@ class SegmentsClass:
 
 class HeadClass(SegmentsClass):
     def __init__(self):
-        SegmentsClass.__init__(self, position=vector(0, 0, 0), next_segment=None, last_segment=None)
+        SegmentsClass.__init__(self, position=vector(0, 0, 0))
         self.segment.color = color.orange
         self.forward = vector(1, 0, 0)
         self.for_guide = sphere(pos=self.segment.pos+self.forward, radius=0.1, color=color.blue)
@@ -81,10 +85,16 @@ class HeadClass(SegmentsClass):
 
 def main():
     global key_event
+    scene.bind('keydown', direction)
     box()
     head = HeadClass()
-    segment1 = SegmentsClass(vector(-1, 0, 0), None, None)
+    segment1 = SegmentsClass(vector(0, 0, 0))
     head.link_with(segment1)
+    segment2 = SegmentsClass(vector(0, 0, 0))
+    segment1.link_with(segment2)
+    segment3 = SegmentsClass(vector(0, 0, 0))
+    segment2.link_with(segment3)
+    scene.camera.follow(head.segment)
     while True:
         sleep(0.3)
         head.head_turn_space(key_event)
