@@ -75,11 +75,18 @@ class HeadClass(SegmentsClass):
             self.forward, self.upward = -self.upward, self.forward
         self.segment.rotate(turn_angle, turn_axis)
         self.next_segment.move_turn_space(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
+        self.last_turn_angle = turn_angle
+        self.last_turn_axis = turn_axis
         self.segment.pos += self.forward
         self.for_guide.pos = self.segment.pos+self.forward
         self.up_guide.pos = self.segment.pos+self.upward
 
     def head_turn_planet(self, keystroke):
+        pass
+
+
+class PlanetClass:
+    def __init__(self):
         pass
 
 

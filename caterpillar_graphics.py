@@ -75,15 +75,15 @@ def make_suit(caterpillar_pos, forward, upward):
     return suit
 
 
-def put_planet(planet, previousplanets):
+def put_planet(planet, previous_planets):
     """Randomises the positions of a planet"""
     planet.pos = vector(int(150*random() - 50), int(150*random() - 50), int(150*random()) - 50)
     if norm(planet.pos).equals(vector(0, 1, 0)) or norm(planet.pos).equals(vector(0, -1, 0)):
         planet.pos += vector(1, 0, 0)
-    for otherplanet in previousplanets:
-        if mag(planet.pos - otherplanet.pos) < planet.radius + otherplanet.radius + 5\
-        or mag(planet.pos) < planet.radius + 10:
-            put_planet(planet, previousplanets)
+    for other_planet in previous_planets:
+        if mag(planet.pos - other_planet.pos) < planet.radius + other_planet.radius + 5\
+         or mag(planet.pos) < planet.radius + 10:
+            put_planet(planet, previous_planets)
 
 
 def make_planets(number_of_planets):

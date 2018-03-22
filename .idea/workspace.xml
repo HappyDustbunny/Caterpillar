@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7225687a-116a-439f-9fa2-8ec901dd182d" name="Default" comment="Got the class to handle the crossproduct of forward and upward.&#10;Cleaned up the code a bit.&#10;Still problems with turn_list not getting updated properly...">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change beforePath="$PROJECT_DIR$/caterpillar_alt.py" afterPath="$PROJECT_DIR$/caterpillar_alt.py" />
+      <change beforePath="$PROJECT_DIR$/caterpillar_graphics.py" afterPath="$PROJECT_DIR$/caterpillar_graphics.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -19,7 +21,7 @@
       <file leaf-file-name="caterpillar.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/caterpillar.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1462">
+            <state relative-caret-position="1394">
               <caret line="86" column="13" lean-forward="false" selection-start-line="86" selection-start-column="8" selection-end-line="86" selection-end-column="13" />
               <folding>
                 <element signature="e#45#66#0" expanded="true" />
@@ -28,11 +30,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="caterpillar_alt.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="caterpillar_alt.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/caterpillar_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="96" column="17" lean-forward="false" selection-start-line="96" selection-start-column="17" selection-end-line="96" selection-end-column="17" />
+            <state relative-caret-position="238">
+              <caret line="89" column="12" lean-forward="false" selection-start-line="89" selection-start-column="12" selection-end-line="89" selection-end-column="12" />
               <folding>
                 <element signature="e#49#70#0" expanded="true" />
               </folding>
@@ -40,11 +42,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="caterpillar_graphics.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="caterpillar_graphics.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/caterpillar_graphics.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="6" column="48" lean-forward="false" selection-start-line="6" selection-start-column="48" selection-end-line="6" selection-end-column="48" />
+            <state relative-caret-position="1003">
+              <caret line="85" column="30" lean-forward="false" selection-start-line="85" selection-start-column="30" selection-end-line="85" selection-end-column="30" />
               <folding>
                 <element signature="e#34#55#0" expanded="true" />
               </folding>
@@ -63,7 +65,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>rotate_caterpillar</find>
       <find>on_pl</find>
       <find>angle</find>
       <find>make_pl</find>
@@ -93,11 +94,13 @@
       <find>position</find>
       <find>key_event</find>
       <find>scene</find>
+      <find>otherplanet</find>
     </findStrings>
     <replaceStrings>
       <replace>&quot;&quot;&quot;</replace>
       <replace>right_pupil</replace>
       <replace>PI/2</replace>
+      <replace>other_planet</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -112,11 +115,11 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/caterpillar_graphics.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
         <option value="$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py" />
         <option value="$PROJECT_DIR$/caterpillar.py" />
         <option value="$PROJECT_DIR$/caterpillar_alt.py" />
+        <option value="$PROJECT_DIR$/caterpillar_graphics.py" />
       </list>
     </option>
   </component>
@@ -867,7 +870,7 @@
     <entry file="file://C:/Program Files/Python36/Lib/site-packages/vpython/vpython.py" />
     <entry file="file://$PROJECT_DIR$/caterpillar.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1462">
+        <state relative-caret-position="1394">
           <caret line="86" column="13" lean-forward="false" selection-start-line="86" selection-start-column="8" selection-end-line="86" selection-end-column="13" />
           <folding>
             <element signature="e#45#66#0" expanded="true" />
@@ -875,22 +878,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/caterpillar_graphics.py">
+    <entry file="file://$PROJECT_DIR$/caterpillar_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="6" column="48" lean-forward="false" selection-start-line="6" selection-start-column="48" selection-end-line="6" selection-end-column="48" />
+        <state relative-caret-position="238">
+          <caret line="89" column="12" lean-forward="false" selection-start-line="89" selection-start-column="12" selection-end-line="89" selection-end-column="12" />
           <folding>
-            <element signature="e#34#55#0" expanded="true" />
+            <element signature="e#49#70#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/caterpillar_alt.py">
+    <entry file="file://$PROJECT_DIR$/caterpillar_graphics.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="96" column="17" lean-forward="false" selection-start-line="96" selection-start-column="17" selection-end-line="96" selection-end-column="17" />
+        <state relative-caret-position="1003">
+          <caret line="85" column="30" lean-forward="false" selection-start-line="85" selection-start-column="30" selection-end-line="85" selection-end-column="30" />
           <folding>
-            <element signature="e#49#70#0" expanded="true" />
+            <element signature="e#34#55#0" expanded="true" />
           </folding>
         </state>
       </provider>
