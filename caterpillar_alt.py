@@ -25,6 +25,9 @@ class SegmentsClass:
         self.last_segment = None
         self.last_turn_axis = vector(0, 1, 0)
         self.last_turn_angle = 0
+        self.on_planet = None
+        self.planet_fresh = None
+        self.right = vector(0, 0, 1)
 
     def link_with(self, other_segment):
         self.next_segment = other_segment
@@ -38,8 +41,31 @@ class SegmentsClass:
         self.last_turn_axis = turn_axis
         self.segment.pos = moveto
 
-    def move_turn_planet(self):
-        pass
+    def planet_approach(self, moveto, turn_angle, turn_axis, right, planet):
+        self.segment.rotate(turn_angle, turn_axis)
+        if self.next_segment is not None:
+            self.next_segment.move_turn_planet(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
+        self.last_turn_angle = turn_angle
+        self.last_turn_axis = turn_axis
+        self.right = right
+        self.on_planet = planet
+        self.segment.pos = moveto
+        self.planet_fresh = True
+
+    def move_turn_planet(self, moveto, turn_angle, turn_axis):
+        self.segment.rotate(turn_angle, turn_axis)
+        self.right.rotate(turn_angle, turn_axis)
+        self.segment.rotate(self.on_planet.radius, self.right)
+        if self.next_segment is not None:
+            if self.planet_fresh:
+                self.planet_approach(self.segment.pos, self.last_turn_angle,
+                                     self.last_turn_axis, self.right, self.planet)
+                self.planet_fresh = False
+            else:
+                self.next_segment.move_turn_planet(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
+        self.last_turn_angle = turn_angle
+        self.last_turn_axis = turn_axis
+        self.segment.pos = moveto
 
 
 class HeadClass(SegmentsClass):
