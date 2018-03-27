@@ -19,7 +19,7 @@
       <file leaf-file-name="caterpillar.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/caterpillar.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
+            <state relative-caret-position="-1581">
               <caret line="148" column="60" lean-forward="false" selection-start-line="148" selection-start-column="60" selection-end-line="148" selection-end-column="60" />
               <folding>
                 <element signature="e#45#66#0" expanded="true" />
@@ -31,8 +31,8 @@
       <file leaf-file-name="caterpillar_alt.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/caterpillar_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="48" column="39" lean-forward="false" selection-start-line="48" selection-start-column="39" selection-end-line="48" selection-end-column="39" />
+            <state relative-caret-position="359">
+              <caret line="125" column="86" lean-forward="true" selection-start-line="125" selection-start-column="86" selection-end-line="125" selection-end-column="86" />
               <folding>
                 <element signature="e#49#70#0" expanded="true" />
               </folding>
@@ -43,7 +43,7 @@
       <file leaf-file-name="caterpillar_graphics.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/caterpillar_graphics.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="833">
+            <state relative-caret-position="527">
               <caret line="85" column="30" lean-forward="false" selection-start-line="85" selection-start-column="30" selection-end-line="85" selection-end-column="30" />
               <folding>
                 <element signature="e#34#55#0" expanded="true" />
@@ -63,8 +63,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>on_pl</find>
-      <find>angle</find>
       <find>make_pl</find>
       <find>planets</find>
       <find>on_planet</find>
@@ -93,12 +91,16 @@
       <find>key_event</find>
       <find>scene</find>
       <find>otherplanet</find>
+      <find>planet_fresh</find>
+      <find>fresh_enviroment</find>
     </findStrings>
     <replaceStrings>
       <replace>&quot;&quot;&quot;</replace>
       <replace>right_pupil</replace>
       <replace>PI/2</replace>
       <replace>other_planet</replace>
+      <replace>fresh_enviroment</replace>
+      <replace>fresh_environment</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -866,19 +868,9 @@
     <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
     <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py" />
     <entry file="file://C:/Program Files/Python36/Lib/site-packages/vpython/vpython.py" />
-    <entry file="file://$PROJECT_DIR$/caterpillar.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="148" column="60" lean-forward="false" selection-start-line="148" selection-start-column="60" selection-end-line="148" selection-end-column="60" />
-          <folding>
-            <element signature="e#45#66#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/caterpillar_graphics.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="833">
+        <state relative-caret-position="527">
           <caret line="85" column="30" lean-forward="false" selection-start-line="85" selection-start-column="30" selection-end-line="85" selection-end-column="30" />
           <folding>
             <element signature="e#34#55#0" expanded="true" />
@@ -886,10 +878,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/caterpillar.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1581">
+          <caret line="148" column="60" lean-forward="false" selection-start-line="148" selection-start-column="60" selection-end-line="148" selection-end-column="60" />
+          <folding>
+            <element signature="e#45#66#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/caterpillar_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="48" column="39" lean-forward="false" selection-start-line="48" selection-start-column="39" selection-end-line="48" selection-end-column="39" />
+        <state relative-caret-position="359">
+          <caret line="125" column="86" lean-forward="true" selection-start-line="125" selection-start-column="86" selection-end-line="125" selection-end-column="86" />
           <folding>
             <element signature="e#49#70#0" expanded="true" />
           </folding>

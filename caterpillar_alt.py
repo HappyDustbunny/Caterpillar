@@ -26,7 +26,8 @@ class SegmentsClass:
         self.last_turn_axis = vector(0, 1, 0)
         self.last_turn_angle = 0
         self.on_planet = None
-        self.planet_fresh = None
+        self.fresh_environment = False
+        # fresh_environment is used to check if the segment has just landed on a planet or it has just left a planet.
         self.right = vector(0, 0, 1)
 
     def link_with(self, other_segment):
@@ -44,23 +45,23 @@ class SegmentsClass:
     def planet_approach(self, moveto, turn_angle, turn_axis, right, planet):
         self.segment.rotate(turn_angle, turn_axis)
         if self.next_segment is not None:
-            self.next_segment.move_turn_planet(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
+            self.next_segment.move_turn_space(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
         self.last_turn_angle = turn_angle
         self.last_turn_axis = turn_axis
         self.right = right
         self.on_planet = planet
         self.segment.pos = moveto
-        self.planet_fresh = True
+        self.fresh_environment = True
 
     def move_turn_planet(self, moveto, turn_angle, turn_axis):
         self.segment.rotate(turn_angle, turn_axis)
         self.right.rotate(turn_angle, turn_axis)
-        self.segment.rotate(self.on_planet.radius, self.right)
+        self.segment.rotate(1/self.on_planet.radius, self.right)
         if self.next_segment is not None:
-            if self.planet_fresh:
+            if self.fresh_environment:
                 self.planet_approach(self.segment.pos, self.last_turn_angle,
-                                     self.last_turn_axis, self.right, self.planet)
-                self.planet_fresh = False
+                                     self.last_turn_axis, self.right, self.on_planet)
+                self.fresh_environment = False
             else:
                 self.next_segment.move_turn_planet(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
         self.last_turn_angle = turn_angle
@@ -108,7 +109,21 @@ class HeadClass(SegmentsClass):
         self.up_guide.pos = self.segment.pos+self.upward
 
     def head_turn_planet(self, keystroke):
-        pass
+        turn_axis = self.upward
+        turn_angle = 0
+        if keystroke == 'a':
+            turn_axis = self.upward
+            turn_angle = radians(90)
+            self.forward = -self.right()
+        if keystroke == 'd':
+            turn_axis = -self.upward
+            turn_angle = radians(90)
+            self.forward = self.right()
+        if keystroke == 'w':
+            pass
+            #TODO Leaving the planet needs to be implemented.
+        self.segment.rotate(turn_angle, turn_axis)
+        self.segment.rotate(1/self.on_planet.radius, cross(self.forward, self.upward))
 
 
 class PlanetClass:
