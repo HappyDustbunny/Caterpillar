@@ -34,10 +34,21 @@ class SegmentsClass:
         self.next_segment = other_segment
         other_segment.last_segment = self
 
-    def move_turn_space(self, moveto, turn_angle, turn_axis):
+    def move_turn(self, moveto, turn_angle, turn_axis):
         self.segment.rotate(turn_angle, turn_axis)
+        if self.on_planet is not None:
+            self.segment.rotate(1/self.on_planet.radius, self.right)
         if self.next_segment is not None:
-            self.next_segment.move_turn_space(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
+            if self.fresh_environment:
+                if self.on_planet is None:
+                    pass
+                else:
+                    self.planet_approach(self.segment.pos, self.last_turn_angle,
+                                         self.last_turn_axis, self.right, self.on_planet)
+                    self.fresh_environment = False
+            else:
+                self.next_segment.move_turn(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
+        self.right.rotate(turn_angle, turn_axis)
         self.last_turn_angle = turn_angle
         self.last_turn_axis = turn_axis
         self.segment.pos = moveto
@@ -45,28 +56,13 @@ class SegmentsClass:
     def planet_approach(self, moveto, turn_angle, turn_axis, right, planet):
         self.segment.rotate(turn_angle, turn_axis)
         if self.next_segment is not None:
-            self.next_segment.move_turn_space(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
+            self.next_segment.move_turn(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
         self.last_turn_angle = turn_angle
         self.last_turn_axis = turn_axis
         self.right = right
         self.on_planet = planet
         self.segment.pos = moveto
         self.fresh_environment = True
-
-    def move_turn_planet(self, moveto, turn_angle, turn_axis):
-        self.segment.rotate(turn_angle, turn_axis)
-        self.right.rotate(turn_angle, turn_axis)
-        self.segment.rotate(1/self.on_planet.radius, self.right)
-        if self.next_segment is not None:
-            if self.fresh_environment:
-                self.planet_approach(self.segment.pos, self.last_turn_angle,
-                                     self.last_turn_axis, self.right, self.on_planet)
-                self.fresh_environment = False
-            else:
-                self.next_segment.move_turn_planet(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
-        self.last_turn_angle = turn_angle
-        self.last_turn_axis = turn_axis
-        self.segment.pos = moveto
 
 
 class HeadClass(SegmentsClass):
@@ -78,30 +74,30 @@ class HeadClass(SegmentsClass):
         self.upward = vector(0, 1, 0)
         self.up_guide = sphere(pos=self.segment.pos+self.upward, radius=0.1, color=color.cyan)
 
-    def right(self):
-        return norm(cross(self.forward, self.upward))
-
     def head_turn_space(self, keystroke):
         turn_axis = self.upward
         turn_angle = 0
+        head_right = norm(cross(self.forward, self.upward))
+        # head_right is separate from normal right, because the head has forward and upward,
+        # and head_right can therefore be defined more accurately
         if keystroke == 'a':
             turn_axis = self.upward
             turn_angle = radians(90)
-            self.forward = -self.right()
+            self.forward = -head_right
         if keystroke == 'd':
             turn_axis = -self.upward
             turn_angle = radians(90)
-            self.forward = self.right()
+            self.forward = head_right
         if keystroke == 'w':
-            turn_axis = self.right()
+            turn_axis = head_right
             turn_angle = radians(90)
             self.forward, self.upward = self.upward, -self.forward
         if keystroke == 's':
-            turn_axis = -self.right()
+            turn_axis = -head_right
             turn_angle = radians(90)
             self.forward, self.upward = -self.upward, self.forward
         self.segment.rotate(turn_angle, turn_axis)
-        self.next_segment.move_turn_space(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
+        self.next_segment.move_turn(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
         self.last_turn_angle = turn_angle
         self.last_turn_axis = turn_axis
         self.segment.pos += self.forward
@@ -111,19 +107,33 @@ class HeadClass(SegmentsClass):
     def head_turn_planet(self, keystroke):
         turn_axis = self.upward
         turn_angle = 0
+        head_right = norm(cross(self.forward, self.upward))
+        # head_right is separate from normal right, because the head has forward and upward,
+        # and head_right can therefore be defined more accurately
         if keystroke == 'a':
             turn_axis = self.upward
             turn_angle = radians(90)
-            self.forward = -self.right()
+            self.forward = -head_right
         if keystroke == 'd':
             turn_axis = -self.upward
             turn_angle = radians(90)
-            self.forward = self.right()
+            self.forward = head_right
         if keystroke == 'w':
             pass
-            #TODO Leaving the planet needs to be implemented.
+            # TODO Leaving the planet needs to be implemented.
+        head_right = cross(self.forward, self.upward)
         self.segment.rotate(turn_angle, turn_axis)
-        self.segment.rotate(1/self.on_planet.radius, cross(self.forward, self.upward))
+        self.segment.rotate(1/self.on_planet.radius, head_right)
+        if self.fresh_environment:
+            self.next_segment.planet_approach(self.segment.pos, self.last_turn_angle, self.last_turn_axis,
+                                              self.head_right, self.on_planet)
+        else:
+            self.next_segment.move_turn(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
+        self.forward.rotate(1/self.on_planet.radius, head_right)
+        self.upward.rotate(1/self.on_planet.radius, head_right)
+        self.segment.pos += self.forward
+        self.for_guide.pos = self.segment.pos+self.forward
+        self.up_guide.pos = self.segment.pos+self.upward
 
 
 class PlanetClass:
