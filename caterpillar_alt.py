@@ -41,9 +41,9 @@ class SegmentsClass:
         if self.next_segment is not None:
             if self.fresh_environment:
                 if self.on_planet is None:
-                    pass
+                    self.next_segment.planet_escape(self.pos, self.last_turn_angle, self.last_turn_axis)
                 else:
-                    self.planet_approach(self.segment.pos, self.last_turn_angle,
+                    self.next_segment.planet_approach(self.segment.pos, self.last_turn_angle,
                                          self.last_turn_axis, self.right, self.on_planet)
                     self.fresh_environment = False
             else:
@@ -64,15 +64,20 @@ class SegmentsClass:
         self.segment.pos = moveto
         self.fresh_environment = True
 
+    def planet_escape(self, moveto, turn_angle, turn_axis):
+        pass
+        # TODO Leaving the planet needs to be implemented.
+
 
 class HeadClass(SegmentsClass):
-    def __init__(self):
+    def __init__(self, planets):
         SegmentsClass.__init__(self, position=vector(0, 0, 0))
         self.segment.color = color.orange
         self.forward = vector(1, 0, 0)
         self.for_guide = sphere(pos=self.segment.pos+self.forward, radius=0.1, color=color.blue)
         self.upward = vector(0, 1, 0)
         self.up_guide = sphere(pos=self.segment.pos+self.upward, radius=0.1, color=color.cyan)
+        self.planets = planets
 
     def head_turn_space(self, keystroke):
         turn_axis = self.upward
@@ -103,6 +108,12 @@ class HeadClass(SegmentsClass):
         self.segment.pos += self.forward
         self.for_guide.pos = self.segment.pos+self.forward
         self.up_guide.pos = self.segment.pos+self.upward
+        planet_or_space = "space"
+        for planet in self.planets:
+            if mag(planet.orb.pos - self.segment.pos):
+                self.on_planet = planet
+                planet_or_space = "planet"
+                # TODO The head needs to be brought to the surface of the planet.
 
     def head_turn_planet(self, keystroke):
         turn_axis = self.upward
@@ -137,15 +148,23 @@ class HeadClass(SegmentsClass):
 
 
 class PlanetClass:
-    def __init__(self):
-        pass
+    def __init__(self, position, input_radius, food_count):
+        self.orb = sphere(pos=position, radius=input_radius, texture=textures.wood_old)
+        self.food = self.__first_food_distribution(food_count)
+
+    def __first_food_distribution(self, food_count):
+        return "There is no food"
+        # TODO implementing food.
 
 
 def main():
     global key_event
     scene.bind('keydown', direction)
     box()
-    head = HeadClass()
+    planets = []
+    planet1 = PlanetClass(vector(40, -10, 0), 20, 0)
+    planets.append(planet1)
+    head = HeadClass(planets)
     segment1 = SegmentsClass(vector(0, 0, 0))
     head.link_with(segment1)
     segment2 = SegmentsClass(vector(0, 0, 0))
@@ -153,9 +172,17 @@ def main():
     segment3 = SegmentsClass(vector(0, 0, 0))
     segment2.link_with(segment3)
     scene.camera.follow(head.segment)
+    planet_or_space = "space"
     while True:
         sleep(0.3)
-        head.head_turn_space(key_event)
+        if planet_or_space == "space":
+            head.head_turn_space(key_event)
+        elif planet_or_space == "planet":
+            head.head_turn_planet(key_event)
+        else:
+            print("Something went wrong. planet_or_space became something other than 'planet' or 'space'.")
+            print("It became", planet_or_space)
+            return
         key_event = ''
 
 main()
