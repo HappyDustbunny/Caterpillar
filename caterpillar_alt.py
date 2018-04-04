@@ -79,7 +79,7 @@ class HeadClass(SegmentsClass):
         self.up_guide = sphere(pos=self.segment.pos+self.upward, radius=0.1, color=color.cyan)
         self.planets = planets
 
-    def head_turn_space(self, keystroke):
+    def head_turn(self, keystroke):
         turn_axis = self.upward
         turn_angle = 0
         head_right = norm(cross(self.forward, self.upward))
@@ -93,58 +93,49 @@ class HeadClass(SegmentsClass):
             turn_axis = -self.upward
             turn_angle = radians(90)
             self.forward = head_right
-        if keystroke == 'w':
-            turn_axis = head_right
-            turn_angle = radians(90)
-            self.forward, self.upward = self.upward, -self.forward
-        if keystroke == 's':
-            turn_axis = -head_right
-            turn_angle = radians(90)
-            self.forward, self.upward = -self.upward, self.forward
-        self.segment.rotate(turn_angle, turn_axis)
-        self.next_segment.move_turn(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
-        self.last_turn_angle = turn_angle
-        self.last_turn_axis = turn_axis
-        self.segment.pos += self.forward
-        self.for_guide.pos = self.segment.pos+self.forward
-        self.up_guide.pos = self.segment.pos+self.upward
-        planet_or_space = "space"
-        for planet in self.planets:
-            if mag(planet.orb.pos - self.segment.pos):
-                self.on_planet = planet
-                planet_or_space = "planet"
-                # TODO The head needs to be brought to the surface of the planet.
 
-    def head_turn_planet(self, keystroke):
-        turn_axis = self.upward
-        turn_angle = 0
-        head_right = norm(cross(self.forward, self.upward))
-        # head_right is separate from normal right, because the head has forward and upward,
-        # and head_right can therefore be defined more accurately
-        if keystroke == 'a':
-            turn_axis = self.upward
-            turn_angle = radians(90)
-            self.forward = -head_right
-        if keystroke == 'd':
-            turn_axis = -self.upward
-            turn_angle = radians(90)
-            self.forward = head_right
-        if keystroke == 'w':
-            pass
-            # TODO Leaving the planet needs to be implemented.
-        head_right = cross(self.forward, self.upward)
-        self.segment.rotate(turn_angle, turn_axis)
-        self.segment.rotate(1/self.on_planet.radius, head_right)
-        if self.fresh_environment:
-            self.next_segment.planet_approach(self.segment.pos, self.last_turn_angle, self.last_turn_axis,
-                                              self.head_right, self.on_planet)
+        if self.on_planet is None:
+            if keystroke == 'w':
+                turn_axis = head_right
+                turn_angle = radians(90)
+                self.forward, self.upward = self.upward, -self.forward
+            if keystroke == 's':
+                turn_axis = -head_right
+                turn_angle = radians(90)
+                self.forward, self.upward = -self.upward, self.forward
+            self.segment.rotate(turn_angle, turn_axis)
+            if self.fresh_environment:
+                pass
+            else:
+                self.next_segment.move_turn(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
+            self.last_turn_angle = turn_angle
+            self.last_turn_axis = turn_axis
+            self.segment.pos += self.forward
+            self.for_guide.pos = self.segment.pos+self.forward
+            self.up_guide.pos = self.segment.pos+self.upward
+            for planet in self.planets:
+                if mag(planet.orb.pos - self.segment.pos):
+                    self.on_planet = planet
+                    # TODO The head needs to be brought to the surface of the planet.
         else:
-            self.next_segment.move_turn(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
-        self.forward.rotate(1/self.on_planet.radius, head_right)
-        self.upward.rotate(1/self.on_planet.radius, head_right)
-        self.segment.pos += self.forward
-        self.for_guide.pos = self.segment.pos+self.forward
-        self.up_guide.pos = self.segment.pos+self.upward
+            if keystroke == 'w':
+                pass
+                # TODO Leaving the planet needs to be implemented.
+            head_right = cross(self.forward, self.upward)
+            self.segment.rotate(turn_angle, turn_axis)
+            self.segment.rotate(1/self.on_planet.radius, head_right)
+            if self.fresh_environment:
+                self.next_segment.planet_approach(self.segment.pos, self.last_turn_angle, self.last_turn_axis,
+                                                  head_right, self.on_planet)
+            else:
+                self.next_segment.move_turn(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
+            self.forward.rotate(1/self.on_planet.radius, head_right)
+            self.upward.rotate(1/self.on_planet.radius, head_right)
+            self.last_turn_angle = turn_angle
+            self.last_turn_axis = turn_axis
+            self.segment.pos += self.forward
+            self.for_guide.pos = self.segment.pos+self.forward
+            self.up_guide.pos = self.segment.pos+self.upward
 
 
 class PlanetClass:
@@ -164,6 +155,7 @@ def main():
     planets = []
     planet1 = PlanetClass(vector(40, -10, 0), 20, 0)
     planets.append(planet1)
+
     head = HeadClass(planets)
     segment1 = SegmentsClass(vector(0, 0, 0))
     head.link_with(segment1)
@@ -171,18 +163,11 @@ def main():
     segment1.link_with(segment2)
     segment3 = SegmentsClass(vector(0, 0, 0))
     segment2.link_with(segment3)
+
     scene.camera.follow(head.segment)
-    planet_or_space = "space"
     while True:
         sleep(0.3)
-        if planet_or_space == "space":
-            head.head_turn_space(key_event)
-        elif planet_or_space == "planet":
-            head.head_turn_planet(key_event)
-        else:
-            print("Something went wrong. planet_or_space became something other than 'planet' or 'space'.")
-            print("It became", planet_or_space)
-            return
+        head.head_turn(key_event)
         key_event = ''
 
 main()

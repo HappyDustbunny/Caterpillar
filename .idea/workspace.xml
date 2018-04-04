@@ -19,7 +19,7 @@
       <file leaf-file-name="caterpillar.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/caterpillar.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="170">
+            <state relative-caret-position="2601">
               <caret line="157" column="48" selection-start-line="157" selection-start-column="48" selection-end-line="157" selection-end-column="48" />
               <folding>
                 <element signature="e#45#66#0" expanded="true" />
@@ -31,8 +31,8 @@
       <file leaf-file-name="caterpillar_alt.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/caterpillar_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="476">
-              <caret line="115" column="81" selection-start-line="115" selection-start-column="81" selection-end-line="115" selection-end-column="81" />
+            <state relative-caret-position="170">
+              <caret line="117" column="43" lean-forward="true" selection-start-line="117" selection-start-column="43" selection-end-line="117" selection-end-column="43" />
               <folding>
                 <element signature="e#49#70#0" expanded="true" />
               </folding>
@@ -43,7 +43,7 @@
       <file leaf-file-name="caterpillar_graphics.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/caterpillar_graphics.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
+            <state relative-caret-position="1530">
               <caret line="91" column="44" selection-start-line="91" selection-start-column="26" selection-end-line="91" selection-end-column="44" />
               <folding>
                 <element signature="e#34#55#0" expanded="true" />
@@ -63,7 +63,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>caterpillar_pos</find>
       <find>equal</find>
       <find>cat.pos</find>
       <find>upward</find>
@@ -77,7 +76,7 @@
       <find>print</find>
       <find>last_forward</find>
       <find>last_upward</find>
-      <find>diff_angle(cat.forward, cat.up)</find>
+      <find />
       <find>turn_list</find>
       <find>score</find>
       <find>shuffle</find>
@@ -93,6 +92,7 @@
       <find>headright</find>
       <find>self.head_right()</find>
       <find>pass</find>
+      <find>planet_or</find>
     </findStrings>
     <replaceStrings>
       <replace>&quot;&quot;&quot;</replace>
@@ -341,31 +341,31 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39930555" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32916668" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32916668" />
     </layout>
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info content_ui="combo" id="Project" order="0" weight="0.21901529" />
       <window_info id="Structure" order="1" visible="true" weight="0.16180371" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32916668" />
+      <window_info anchor="bottom" id="Version Control" order="8" sideWeight="0.49124667" weight="0.32893157" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.39975992" />
-      <window_info anchor="bottom" id="Python Console" order="9" weight="0.32893157" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32916668" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39930555" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.32893157" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5087533" side_tool="true" weight="0.32893157" />
-      <window_info anchor="bottom" id="Version Control" order="8" sideWeight="0.49124667" weight="0.32893157" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32916668" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Python Console" order="9" weight="0.32893157" />
     </layout-to-restore>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -858,7 +858,7 @@
     <entry file="file://C:/Program Files/Python36/Lib/site-packages/vpython/vpython.py" />
     <entry file="file://$PROJECT_DIR$/caterpillar.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
+        <state relative-caret-position="2601">
           <caret line="157" column="48" selection-start-line="157" selection-start-column="48" selection-end-line="157" selection-end-column="48" />
           <folding>
             <element signature="e#45#66#0" expanded="true" />
@@ -868,7 +868,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/caterpillar_graphics.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
+        <state relative-caret-position="1530">
           <caret line="91" column="44" selection-start-line="91" selection-start-column="26" selection-end-line="91" selection-end-column="44" />
           <folding>
             <element signature="e#34#55#0" expanded="true" />
@@ -878,8 +878,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/caterpillar_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="476">
-          <caret line="115" column="81" selection-start-line="115" selection-start-column="81" selection-end-line="115" selection-end-column="81" />
+        <state relative-caret-position="170">
+          <caret line="117" column="43" lean-forward="true" selection-start-line="117" selection-start-column="43" selection-end-line="117" selection-end-column="43" />
           <folding>
             <element signature="e#49#70#0" expanded="true" />
           </folding>
