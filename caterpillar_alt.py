@@ -18,15 +18,15 @@ class SegmentsClass:
     """Each segment of the caterpillar is an instance of the SegmentClass"""
 
     def __init__(self, position):
-        bodyorb = sphere(pos=position, radius=1, color=color.blue)
-        bodyrod = cylinder(pos=position+vector(0, 0, 1.1), radius=0.2, axis=vector(0, 0, -2.2))
-        self.segment = compound([bodyorb, bodyrod])
+        body_orb = sphere(pos=position, radius=1, color=color.blue)
+        body_rod = cylinder(pos=position+vector(0, 0, 1.1), radius=0.2, axis=vector(0, 0, -2.2))
+        self.segment = compound([body_orb, body_rod])
         self.next_segment = None
         self.last_segment = None
         self.last_turn_axis = vector(0, 1, 0)
         self.last_turn_angle = 0
         self.on_planet = None
-        self.fresh_environment = False
+        self.fresh_environment = None
         # fresh_environment is used to check if the segment has just landed on a planet or it has just left a planet.
         self.right = vector(0, 0, 1)
 
@@ -45,7 +45,7 @@ class SegmentsClass:
                 else:
                     self.next_segment.planet_approach(self.segment.pos, self.last_turn_angle,
                                          self.last_turn_axis, self.right, self.on_planet)
-                    self.fresh_environment = False
+                    self.fresh_environment = None
             else:
                 self.next_segment.move_turn(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
         self.right.rotate(turn_angle, turn_axis)
@@ -54,6 +54,7 @@ class SegmentsClass:
         self.segment.pos = moveto
 
     def planet_approach(self, moveto, turn_angle, turn_axis, right, planet):
+        # TODO 1 Implementing fresh_environment as holding the planet-approaching turn angles
         self.segment.rotate(turn_angle, turn_axis)
         if self.next_segment is not None:
             self.next_segment.move_turn(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
@@ -66,7 +67,7 @@ class SegmentsClass:
 
     def planet_escape(self, moveto, turn_angle, turn_axis):
         pass
-        # TODO Leaving the planet needs to be implemented.
+        # TODO 3 Leaving the planet needs to be implemented.
 
 
 class HeadClass(SegmentsClass):
@@ -78,6 +79,27 @@ class HeadClass(SegmentsClass):
         self.upward = vector(0, 1, 0)
         self.up_guide = sphere(pos=self.segment.pos+self.upward, radius=0.1, color=color.cyan)
         self.planets = planets
+
+    def __head_landing(self, planet):
+        self.on_planet = planet
+        core_to_head = norm(self.segment.pos - planet.pos)
+        # core_to_head also acts as a new_upward
+        self.segment.pos = core_to_head * planet.radius
+        if self.forward.equals(-core_to_head):
+            new_forward = norm(self.upward)
+        else:
+            new_forward = norm(self.forward - proj(self.forward, core_to_head))
+        first_turn_angle = diff_angle(self.forward, new_forward)
+        first_turn_axis = cross(self.forward, new_forward)
+        self.forward.rotate(first_turn_angle, first_turn_axis)
+        self.upward.rotate(first_turn_angle, first_turn_axis)
+        self.segment.rotate(first_turn_angle, first_turn_axis)
+        second_turn_angle = diff_angle(self.upward, core_to_head)
+        # new_forward acts a second_turn_axis
+        self.upward.rotate(second_turn_angle, new_forward)
+        self.segment.rotate(second_turn_angle, new_forward)
+        self.fresh_environment = [[first_turn_angle, first_turn_axis], [second_turn_angle, new_forward]]
+        # TODO 2 check if second_turn_angle's arguments need to be swapped.
 
     def head_turn(self, keystroke):
         turn_axis = self.upward
@@ -104,7 +126,7 @@ class HeadClass(SegmentsClass):
                 turn_angle = radians(90)
                 self.forward, self.upward = -self.upward, self.forward
             self.segment.rotate(turn_angle, turn_axis)
-            if self.fresh_environment:
+            if self.fresh_environment is not None:
                 pass
             else:
                 self.next_segment.move_turn(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
@@ -113,20 +135,21 @@ class HeadClass(SegmentsClass):
             self.segment.pos += self.forward
             self.for_guide.pos = self.segment.pos+self.forward
             self.up_guide.pos = self.segment.pos+self.upward
+
             for planet in self.planets:
                 if mag(planet.orb.pos - self.segment.pos):
-                    self.on_planet = planet
-                    # TODO The head needs to be brought to the surface of the planet.
+                    self.__head_landing(planet)
         else:
             if keystroke == 'w':
                 pass
-                # TODO Leaving the planet needs to be implemented.
+                # TODO 3 Leaving the planet needs to be implemented.
             head_right = cross(self.forward, self.upward)
             self.segment.rotate(turn_angle, turn_axis)
             self.segment.rotate(1/self.on_planet.radius, head_right)
-            if self.fresh_environment:
+            if self.fresh_environment is not None:
                 self.next_segment.planet_approach(self.segment.pos, self.last_turn_angle, self.last_turn_axis,
                                                   head_right, self.on_planet)
+                # TODO 1 Implementing fresh_environment as holding the planet-approaching turn angles
             else:
                 self.next_segment.move_turn(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
             self.forward.rotate(1/self.on_planet.radius, head_right)
@@ -144,8 +167,9 @@ class PlanetClass:
         self.food = self.__first_food_distribution(food_count)
 
     def __first_food_distribution(self, food_count):
-        return "There is no food"
-        # TODO implementing food.
+        if food_count == 0:
+            return "There is no food"
+        # TODO 4 implementing food.
 
 
 def main():
