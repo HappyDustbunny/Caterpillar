@@ -18,7 +18,7 @@ class SegmentsClass:
     """Each segment of the caterpillar is an instance of the SegmentClass"""
 
     def __init__(self, position):
-        body_orb = sphere(pos=position, radius=1, color=color.blue)
+        body_orb = sphere(pos=position, radius=.3)
         body_rod = cylinder(pos=position+vector(0, 0, 1.1), radius=0.2, axis=vector(0, 0, -2.2))
         self.segment = compound([body_orb, body_rod])
         self.next_segment = None
@@ -70,10 +70,29 @@ class SegmentsClass:
         # TODO 3 Leaving the planet needs to be implemented.
 
 
+class BodyClass(SegmentsClass):
+    """ Decorates segments with feet """
+
+    def __init__(self):
+        SegmentsClass.__init__(self, position=vector(0, 0, 0))
+        body_orb = sphere(pos=self.segment.pos, radius=1, color=color.blue)
+        left_foot = sphere(pos=self.segment.pos + vector(0, -0.6, -0.5), radius=0.3, color=color.orange)
+        right_foot = sphere(pos=self.segment.pos + vector(0, -0.6, 0.5), radius=0.3, color=color.orange)
+        left_ghost_foot = sphere(pos=self.segment.pos + vector(0, 0.6, -0.5), radius=0.3,
+                                 opacity=0)  # For centering
+        right_ghost_foot = sphere(pos=self.segment.pos + vector(0, 0.6, 0.5), radius=0.3,
+                                  opacity=0)  # For centering
+        self.segment = compound([self.segment, body_orb, left_foot, right_foot, left_ghost_foot, right_ghost_foot])
+
 class HeadClass(SegmentsClass):
     def __init__(self, planets):
         SegmentsClass.__init__(self, position=vector(0, 0, 0))
-        self.segment.color = color.orange
+        head_ball = sphere(pos=self.segment.pos, color=color.orange)  # Make head
+        left_eye = sphere(pos=self.segment.pos + vector(0.5, 0.5, -0.4), radius=0.35)
+        right_eye = sphere(pos=self.segment.pos + vector(0.5, 0.5, 0.4), radius=0.35)
+        left_pupil = sphere(pos=self.segment.pos + vector(0.6, 0.56, -0.42), radius=0.25, color=color.black)
+        right_pupil = sphere(pos=self.segment.pos + vector(0.6, 0.56, 0.42), radius=0.25, color=color.black)
+        self.head = compound([head_ball, left_eye, right_eye, left_pupil, right_pupil])
         self.forward = vector(1, 0, 0)
         self.for_guide = sphere(pos=self.segment.pos+self.forward, radius=0.1, color=color.blue)
         self.upward = vector(0, 1, 0)
@@ -82,9 +101,9 @@ class HeadClass(SegmentsClass):
 
     def __head_landing(self, planet):
         self.on_planet = planet
-        core_to_head = norm(self.segment.pos - planet.pos)
+        core_to_head = norm(self.segment.pos - planet.orb.pos)
         # core_to_head also acts as a new_upward
-        self.segment.pos = core_to_head * planet.radius
+        self.segment.pos = core_to_head * planet.orb.radius
         if self.forward.equals(-core_to_head):
             new_forward = norm(self.upward)
         else:
@@ -137,7 +156,7 @@ class HeadClass(SegmentsClass):
             self.up_guide.pos = self.segment.pos+self.upward
 
             for planet in self.planets:
-                if mag(planet.orb.pos - self.segment.pos):
+                if mag(planet.orb.pos - self.segment.pos) <= planet.orb.radius:
                     self.__head_landing(planet)
         else:
             if keystroke == 'w':
@@ -145,15 +164,15 @@ class HeadClass(SegmentsClass):
                 # TODO 3 Leaving the planet needs to be implemented.
             head_right = cross(self.forward, self.upward)
             self.segment.rotate(turn_angle, turn_axis)
-            self.segment.rotate(1/self.on_planet.radius, head_right)
+            self.segment.rotate(1/self.on_planet.orb.radius, head_right)
             if self.fresh_environment is not None:
                 self.next_segment.planet_approach(self.segment.pos, self.last_turn_angle, self.last_turn_axis,
                                                   head_right, self.on_planet)
                 # TODO 1 Implementing fresh_environment as holding the planet-approaching turn angles
             else:
                 self.next_segment.move_turn(self.segment.pos, self.last_turn_angle, self.last_turn_axis)
-            self.forward.rotate(1/self.on_planet.radius, head_right)
-            self.upward.rotate(1/self.on_planet.radius, head_right)
+            self.forward.rotate(1/self.on_planet.orb.radius, head_right)
+            self.upward.rotate(1/self.on_planet.orb.radius, head_right)
             self.last_turn_angle = turn_angle
             self.last_turn_axis = turn_axis
             self.segment.pos += self.forward
@@ -181,11 +200,11 @@ def main():
     planets.append(planet1)
 
     head = HeadClass(planets)
-    segment1 = SegmentsClass(vector(0, 0, 0))
+    segment1 = BodyClass()
     head.link_with(segment1)
-    segment2 = SegmentsClass(vector(0, 0, 0))
+    segment2 = BodyClass()
     segment1.link_with(segment2)
-    segment3 = SegmentsClass(vector(0, 0, 0))
+    segment3 = BodyClass()
     segment2.link_with(segment3)
 
     scene.camera.follow(head.segment)

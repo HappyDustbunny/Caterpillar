@@ -5,6 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7225687a-116a-439f-9fa2-8ec901dd182d" name="Default" comment="Got the class to handle the crossproduct of forward and upward.&#10;Cleaned up the code a bit.&#10;Still problems with turn_list not getting updated properly...">
+      <change beforePath="$PROJECT_DIR$/.idea/Python.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Python.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/caterpillar_alt.py" beforeDir="false" afterPath="$PROJECT_DIR$/caterpillar_alt.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -19,8 +22,8 @@
       <file leaf-file-name="caterpillar.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/caterpillar.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="221">
-              <caret line="115" column="61" lean-forward="true" selection-start-line="115" selection-start-column="61" selection-end-line="115" selection-end-column="61" />
+            <state relative-caret-position="3454">
+              <caret line="157" column="48" selection-start-line="157" selection-start-column="48" selection-end-line="157" selection-end-column="48" />
               <folding>
                 <element signature="e#45#66#0" expanded="true" />
               </folding>
@@ -31,8 +34,8 @@
       <file leaf-file-name="caterpillar_alt.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/caterpillar_alt.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1139">
-              <caret line="151" column="24" selection-start-line="151" selection-start-column="24" selection-end-line="151" selection-end-column="24" />
+            <state relative-caret-position="169">
+              <caret line="158" column="60" selection-start-line="158" selection-start-column="60" selection-end-line="158" selection-end-column="60" />
               <folding>
                 <element signature="e#49#70#0" expanded="true" />
               </folding>
@@ -43,8 +46,8 @@
       <file leaf-file-name="caterpillar_graphics.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/caterpillar_graphics.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1530">
-              <caret line="91" column="44" selection-start-line="91" selection-start-column="26" selection-end-line="91" selection-end-column="44" />
+            <state relative-caret-position="396">
+              <caret line="18" column="78" lean-forward="true" selection-start-line="9" selection-start-column="4" selection-end-line="18" selection-end-column="78" />
               <folding>
                 <element signature="e#34#55#0" expanded="true" />
               </folding>
@@ -63,14 +66,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>upward</find>
-      <find>rotate</find>
-      <find>pi</find>
-      <find>cat.right</find>
-      <find>cat.right()</find>
-      <find>right</find>
-      <find>turn_list.append</find>
-      <find>turn_list.insert</find>
       <find>print</find>
       <find>last_forward</find>
       <find>last_upward</find>
@@ -93,6 +88,14 @@
       <find>planet_or</find>
       <find>bodyrod</find>
       <find>fresh</find>
+      <find>opa</find>
+      <find>self</find>
+      <find>segment1</find>
+      <find>caterpillar_pos[0]</find>
+      <find>orb</find>
+      <find>on_planet</find>
+      <find>planet_approach</find>
+      <find>__head</find>
     </findStrings>
     <replaceStrings>
       <replace>&quot;&quot;&quot;</replace>
@@ -106,16 +109,21 @@
       <replace>headright()</replace>
       <replace>head_right</replace>
       <replace>body_orb</replace>
+      <replace>self</replace>
+      <replace>self.segment.pos</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="Killing_p_shft" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
     <option name="RESET_MODE" value="MIXED" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/caterpillar_alt.py" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
@@ -151,9 +159,9 @@
     <panes />
   </component>
   <component name="PropertiesComponent">
+    <property name="com.intellij.ide.scratch.LRUPopupBuilder$2/Languages" value="Python" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/caterpillar_alt.py" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
-    <property name="com.intellij.ide.scratch.LRUPopupBuilder$2/Languages" value="Python" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -198,7 +206,7 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\Program Files (x86)\Python36-32\python.exe" />
+      <option name="SDK_HOME" value="C:\Users\Mads Horn\PycharmProjects\untitled\venv\Scripts\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -328,45 +336,56 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
-    <editor active="true" />
+    <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.21901529" />
-      <window_info anchor="bottom" id="TODO" order="6" weight="0.32843137" />
-      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5087533" side_tool="true" weight="0.32893157" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.3970588" />
-      <window_info anchor="bottom" id="Version Control" order="10" sideWeight="0.49124667" weight="0.32843137" />
-      <window_info anchor="bottom" id="Python Console" order="8" weight="0.32843137" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32743362" />
+      <window_info anchor="bottom" id="Messages" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50953895" side_tool="true" weight="0.32743362" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32916668" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.39646018" />
+      <window_info active="true" anchor="bottom" id="Version Control" order="10" sideWeight="0.49046105" visible="true" weight="0.32743362" />
+      <window_info anchor="bottom" id="Python Console" order="8" weight="0.32743362" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.1724138" />
       <window_info anchor="bottom" id="Terminal" order="9" weight="0.32843137" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.39930555" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39823008" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
-      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.21901529" />
+      <window_info anchor="bottom" id="Version Control" order="10" sideWeight="0.49124667" weight="0.32843137" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.1724138" />
+      <window_info anchor="right" id="Commander" order="0" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32843137" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.3970588" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32916668" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.39930555" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.32843137" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5087533" side_tool="true" weight="0.32893157" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32916668" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Python Console" order="8" weight="0.32843137" />
     </layout>
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info content_ui="combo" id="Project" order="0" weight="0.21901529" />
       <window_info id="Structure" order="1" visible="true" weight="0.16180371" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32916668" />
-      <window_info anchor="bottom" id="Version Control" order="8" sideWeight="0.49124667" weight="0.32893157" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.39975992" />
-      <window_info anchor="bottom" id="Python Console" order="9" weight="0.32893157" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32916668" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39930555" />
       <window_info anchor="bottom" id="Terminal" order="10" weight="0.32893157" />
       <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.5087533" side_tool="true" weight="0.32893157" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32916668" />
+      <window_info anchor="bottom" id="Version Control" order="8" sideWeight="0.49124667" weight="0.32893157" />
       <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Python Console" order="9" weight="0.32893157" />
     </layout-to-restore>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -420,7 +439,7 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="31" />
+      <option name="time" value="35" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="PythonConfigurationType">
@@ -857,30 +876,30 @@
     <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch.py" />
     <entry file="file://$APPLICATION_CONFIG_DIR$/scratches/scratch_1.py" />
     <entry file="file://C:/Program Files/Python36/Lib/site-packages/vpython/vpython.py" />
-    <entry file="file://$PROJECT_DIR$/caterpillar_graphics.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1530">
-          <caret line="91" column="44" selection-start-line="91" selection-start-column="26" selection-end-line="91" selection-end-column="44" />
-          <folding>
-            <element signature="e#34#55#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/caterpillar.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="115" column="61" lean-forward="true" selection-start-line="115" selection-start-column="61" selection-end-line="115" selection-end-column="61" />
+        <state relative-caret-position="3454">
+          <caret line="157" column="48" selection-start-line="157" selection-start-column="48" selection-end-line="157" selection-end-column="48" />
           <folding>
             <element signature="e#45#66#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/caterpillar_graphics.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="396">
+          <caret line="18" column="78" lean-forward="true" selection-start-line="9" selection-start-column="4" selection-end-line="18" selection-end-column="78" />
+          <folding>
+            <element signature="e#34#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/caterpillar_alt.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1139">
-          <caret line="151" column="24" selection-start-line="151" selection-start-column="24" selection-end-line="151" selection-end-column="24" />
+        <state relative-caret-position="169">
+          <caret line="158" column="60" selection-start-line="158" selection-start-column="60" selection-end-line="158" selection-end-column="60" />
           <folding>
             <element signature="e#49#70#0" expanded="true" />
           </folding>
